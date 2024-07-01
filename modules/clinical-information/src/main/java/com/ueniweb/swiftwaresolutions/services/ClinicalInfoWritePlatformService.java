@@ -81,4 +81,7 @@ public interface ClinicalInfoWritePlatformService {
     Response saveSurgeryCaseSheet(final CreateSurgeryCaseSheetRequest createSurgeryCaseSheetRequest);
 
     Response  updatSurgeryCaseSheet(final Long id, final CreateSurgeryCaseSheetRequest createSurgeryCaseSheetRequest);
+
+    Response saveNursingIoSheet(final CreateNursingIoReuest createNursingIoReuest);
+
 }

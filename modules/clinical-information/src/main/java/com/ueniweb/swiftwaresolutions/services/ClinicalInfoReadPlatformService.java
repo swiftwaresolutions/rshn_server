@@ -81,5 +81,8 @@ public interface ClinicalInfoReadPlatformService {
 
     List <SurgeryCaseSheetData>fetchSurgeryCaseSheetByVstId(Long visitId);
 
+    List <NursingIoData>fetchNursingIoByVstId(Long vstId);
+
+
 }
 

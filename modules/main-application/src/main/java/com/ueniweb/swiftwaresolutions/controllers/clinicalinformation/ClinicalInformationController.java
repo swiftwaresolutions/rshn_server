@@ -538,5 +538,13 @@ public class ClinicalInformationController {
 //        }
         this.clinicalInfoWritePlatformService.updatSurgeryCaseSheet(id, createSurgeryCaseSheetRequest);
     }
+    @PostMapping("saveNursingIo")
+    public Response saveNursingIo(@RequestBody CreateNursingIoReuest createNursingIoReuest) {
+        return this.clinicalInfoWritePlatformService.saveNursingIoSheet(createNursingIoReuest);
+    }
+    @GetMapping("/fetchNursingIOByVstId/{vstId}")
+    public List<NursingIoData> fetchNursingIoByVstId(@PathVariable(name = "vstId") Long vstId) {
+        return this.clinicalInfoReadPlatformService.fetchNursingIoByVstId(vstId);
+    }
 }
 

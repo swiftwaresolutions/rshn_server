@@ -620,4 +620,14 @@ public class ClinicalInfoReadPlatformServiceImpl implements ClinicalInfoReadPlat
         System.out.print((qry));
         return this.jdbcTemplate.query(qry, surgeryNameRowMapper);
     }
+    @Override
+    public List<NursingIoData> fetchNursingIoByVstId(Long vstId) {
+        log.debug("START of fetchNursingIoByVstId()  vstId{} ", vstId);
+        final NursingIoSheetRowMapper nursingIoSheetRowMapper = new NursingIoSheetRowMapper();
+
+        String qry = "SELECT " + nursingIoSheetRowMapper.tableSchema() + " WHERE visitId = " + vstId;
+
+        log.debug("END of fetchNursingIoByVstId()");
+        return this.jdbcTemplate.query(qry, nursingIoSheetRowMapper);
+    }
 }

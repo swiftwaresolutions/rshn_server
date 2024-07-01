@@ -125,6 +125,9 @@ public class ClinicalInfoWritePlatformServiceImpl implements ClinicalInfoWritePl
 
     private final SurgeryNAmeRepository surgeryNAmeRepository;
 
+    private final NursingIoRepository nursingIoRepository;
+
+
     @Transactional
     @Override
     public Response saveGeneralCaseSheet(final GeneralCaseSheetRequest generalCaseSheetRequest) {
@@ -828,7 +831,20 @@ public class ClinicalInfoWritePlatformServiceImpl implements ClinicalInfoWritePl
             throw new RuntimeException(e);
         }
     }
+    @Override
+    public Response saveNursingIoSheet(CreateNursingIoReuest createNursingIoReuest) {
+        try {
+            log.debug("START saveNursingIo CreateNursing io {}", createNursingIoReuest);
+            final NursingIoSheet nursingIoSheet = NursingIoSheet.to(createNursingIoReuest);
+
+            this.nursingIoRepository.saveAndFlush(nursingIoSheet);
+            log.debug("END saveNursingIo id ");
+            return new Response(nursingIoSheet.getId());
+        } catch (Exception e) {
+            log.error("Caught with exception while savingOrderDiscount {}", e.getMessage());
+            throw new RuntimeException(e.getMessage());
+        }
 
 
-
+    }
 }
