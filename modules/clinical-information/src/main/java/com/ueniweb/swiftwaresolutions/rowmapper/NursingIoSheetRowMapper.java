@@ -20,7 +20,7 @@ public class NursingIoSheetRowMapper   implements RowMapper<NursingIoData>{
 
     public String tableSchema() {
         final StringBuilder builder = new StringBuilder(200);
-        builder.append("a.id,a.patId,a.visitId,a.ipId,a.drain,a.drainDetails,a.inOther,a.inOtherDetails,a.ivf,a.ivfDetails,a.nurseDtmIo,a.oral,a.oralDetails,a.outOther,a.outOtherDetails,a.urine,a.urineDetails,a.inTotal,a.outTotal ");
+        builder.append("a.id,a.patId,a.visitId,a.ipId,a.drain,a.drainDetails,a.inOther,a.inOtherDetails,a.ivf,a.ivfDetails,a.nurseDtmIo,a.oral,a.oralDetails,a.outOther,a.outOtherDetails,a.urine,a.urineDetails,a.inTotal,a.outTotal,a.curDtm ");
         builder.append(this.schema);
         return builder.toString();
     }
@@ -43,14 +43,16 @@ public class NursingIoSheetRowMapper   implements RowMapper<NursingIoData>{
         final String outOtherDetails        = rs.getString("outOtherDetails");
         final String urine        = rs.getString("urine");
         final String urineDetails        = rs.getString("urineDetails");
-        final String inTotal        = rs.getString("inTotal");
-        final String outTotal        = rs.getString("outTotal");
+        final Long inTotal        = rs.getLong("inTotal");
+        final Long outTotal        = rs.getLong("outTotal");
+        final String curDtm        = rs.getString("curDtm");
+
 
 
 
 
 
         return NursingIoData.createNewInstance(  id,  patId,  visitId,  ipId,  drain,  drainDetails,  inOther,  inOtherDetails,  ivf,  ivfDetails,  nurseDtmIo,
-                oral,  oralDetails,  outOther,  outOtherDetails,  urine,  urineDetails,  inTotal,  outTotal);
+                oral,  oralDetails,  outOther,  outOtherDetails,  urine,  urineDetails,  inTotal,  outTotal,curDtm);
     }
 }

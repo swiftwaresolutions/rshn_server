@@ -84,4 +84,7 @@ public interface ClinicalInfoWritePlatformService {
 
     Response saveNursingIoSheet(final CreateNursingIoReuest createNursingIoReuest);
 
+    Response updateNursingIoSheet(final Long id, final CreateNursingIoReuest createNursingIoReuest);
+
+
 }

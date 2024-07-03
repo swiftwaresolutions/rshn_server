@@ -127,6 +127,9 @@ public class ClinicalInfoWritePlatformServiceImpl implements ClinicalInfoWritePl
 
     private final NursingIoRepository nursingIoRepository;
 
+    private final NursingIoRepositoryWrapper nursingIoRepositoryWrapper;
+
+
 
     @Transactional
     @Override
@@ -846,5 +849,20 @@ public class ClinicalInfoWritePlatformServiceImpl implements ClinicalInfoWritePl
         }
 
 
+    }
+    @Transactional
+    @Override
+    public Response updateNursingIoSheet(Long id, CreateNursingIoReuest createNursingIoReuest) {
+        try {
+            log.debug("START of CreateNursingIoReuest() id {} request {}", id, createNursingIoReuest);
+            final NursingIoSheet nursingIoSheet = this.nursingIoRepositoryWrapper.findOneWithNotFoundDetection(id);
+            nursingIoSheet.update(createNursingIoReuest);
+            this.nursingIoRepository.saveAndFlush(nursingIoSheet);
+
+            log.debug("END of updateNursingIoReuest() id {} request {}", id, createNursingIoReuest);
+            return new Response(nursingIoSheet.getId());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 }

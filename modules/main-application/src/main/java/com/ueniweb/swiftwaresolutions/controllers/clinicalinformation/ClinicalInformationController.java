@@ -546,5 +546,9 @@ public class ClinicalInformationController {
     public List<NursingIoData> fetchNursingIoByVstId(@PathVariable(name = "vstId") Long vstId) {
         return this.clinicalInfoReadPlatformService.fetchNursingIoByVstId(vstId);
     }
+    @PutMapping("/updateNursingIO/{id}")
+    public void updateNursingIoSheet(@PathVariable(name = "id") Long id, @RequestBody CreateNursingIoReuest createNursingIoReuest) {
+        this.clinicalInfoWritePlatformService.updateNursingIoSheet(id,createNursingIoReuest);
+    }
 }
 

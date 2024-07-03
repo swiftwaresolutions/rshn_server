@@ -3,6 +3,7 @@ package com.ueniweb.swiftwaresolutions.domain;
 
 import com.ueniweb.swiftwaresolutions.request.CreateNursingIoReuest;
 
+import com.ueniweb.swiftwaresolutions.request.CreateOPVitalsRequest;
 import com.ueniweb.swiftwaresolutions.utils.DateTimeUtils;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -83,11 +84,15 @@ public class NursingIoSheet {
 
     @Column(name = "inTotal")
     @Basic(optional = false)
-    private String inTotal;
+    private Long inTotal;
 
     @Column(name = "outTotal")
     @Basic(optional = false)
-    private String outTotal;
+    private Long outTotal;
+
+    @Column(name = "curDtm")
+    @Basic(optional = false)
+    private String curDtm;
 
     public static NursingIoSheet to(final CreateNursingIoReuest createNursingIoReuest){
 
@@ -110,7 +115,32 @@ public class NursingIoSheet {
         nursingIo.setUrineDetails(createNursingIoReuest.getUrineDetails());
         nursingIo.setInTotal(createNursingIoReuest.getInTotal());
         nursingIo.setOutTotal(createNursingIoReuest.getOutTotal());
+        nursingIo.setCurDtm(DateTimeUtils.convertLocalDateToDateTimeFormat(LocalDateTime.now()));
 
         return nursingIo;
+    }
+    public void update(final CreateNursingIoReuest createNursingIoReuest){
+
+        this.setPatId(createNursingIoReuest.getPatId());
+        this.setVisitId(createNursingIoReuest.getVisitId());
+        this.setIpId(createNursingIoReuest.getIpId());
+        this.setDrain(createNursingIoReuest.getDrain());
+        this.setDrainDetails(createNursingIoReuest.getDrainDetails());
+        this.setInOther(createNursingIoReuest.getInOther());
+        this.setInOtherDetails(createNursingIoReuest.getInOtherDetails());
+        this.setOutOther(createNursingIoReuest.getOutOther());
+        this.setOutOtherDetails(createNursingIoReuest.getOutOtherDetails());
+        this.setIvf(createNursingIoReuest.getIvf());
+        this.setIvfDetails(createNursingIoReuest.getIvfDetails());
+        this.setNurseDtmIo(createNursingIoReuest.getNurseDtmIo());
+        this.setOral(createNursingIoReuest.getOral());
+        this.setOralDetails(createNursingIoReuest.getOralDetails());
+        this.setUrine(createNursingIoReuest.getUrine());
+        this.setUrineDetails(createNursingIoReuest.getUrineDetails());
+        this.setInTotal(createNursingIoReuest.getInTotal());
+        this.setOutTotal(createNursingIoReuest.getOutTotal());
+        this.setCurDtm(DateTimeUtils.convertLocalDateToDateTimeFormat(LocalDateTime.now()));
+
+
     }
 }

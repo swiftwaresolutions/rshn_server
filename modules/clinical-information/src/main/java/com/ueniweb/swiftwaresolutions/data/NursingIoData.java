@@ -39,10 +39,13 @@ public class NursingIoData {
 
     private String urineDetails;
 
-    private String inTotal;
+    private Long inTotal;
 
-    private String outTotal;
-    public NursingIoData(   final Long id,    final Long patId,    final Long visitId,    final Long ipId,    final String drain,    final String drainDetails,    final String inOther,    final String inOtherDetails,    final String ivf,    final String ivfDetails,    final String nurseDtmIo,    final String oral,    final String oralDetails,    final String outOther,    final String outOtherDetails,    final String urine,    final String urineDetails,    final String inTotal,final String outTotal) {
+    private Long outTotal;
+
+    private String curDtm;
+
+    public NursingIoData(   final Long id,    final Long patId,    final Long visitId,    final Long ipId,    final String drain,    final String drainDetails,    final String inOther,    final String inOtherDetails,    final String ivf,    final String ivfDetails,    final String nurseDtmIo,    final String oral,    final String oralDetails,    final String outOther,    final String outOtherDetails,    final String urine,    final String urineDetails,    final Long inTotal,final Long outTotal,final String curDtm) {
 
         this.id = id;
         this.patId = patId;
@@ -63,8 +66,9 @@ public class NursingIoData {
         this.urineDetails=urineDetails;
         this.inTotal=inTotal;
         this.outTotal=outTotal;
+        this.curDtm=curDtm;
     }
-    public static NursingIoData createNewInstance(final Long id,final Long patId,final Long visitId,final Long ipId,final String drain,final String drainDetails,final String inOther,final String inOtherDetails,final String ivf,final String ivfDetails,final String nurseDtmIo,final String oral,final String oralDetails,final String outOther,final String outOtherDetails,final String urine,final String urineDetails,final String inTotal,final String outTotal){
-        return new NursingIoData(  id,  patId,  visitId,  ipId,  drain,  drainDetails,  inOther,  inOtherDetails,  ivf,  ivfDetails,  nurseDtmIo,  oral,  oralDetails,  outOther,  outOtherDetails,  urine,  urineDetails,  inTotal,  outTotal);
+    public static NursingIoData createNewInstance(final Long id,final Long patId,final Long visitId,final Long ipId,final String drain,final String drainDetails,final String inOther,final String inOtherDetails,final String ivf,final String ivfDetails,final String nurseDtmIo,final String oral,final String oralDetails,final String outOther,final String outOtherDetails,final String urine,final String urineDetails,final Long inTotal,final Long outTotal ,final String curDtm){
+        return new NursingIoData(  id,  patId,  visitId,  ipId,  drain,  drainDetails,  inOther,  inOtherDetails,  ivf,  ivfDetails,  nurseDtmIo,  oral,  oralDetails,  outOther,  outOtherDetails,  urine,  urineDetails,  inTotal,  outTotal,curDtm);
     }
 }

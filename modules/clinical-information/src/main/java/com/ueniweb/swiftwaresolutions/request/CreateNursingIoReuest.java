@@ -39,9 +39,11 @@ public class CreateNursingIoReuest {
 
     private String urineDetails;
 
-    private String inTotal;
+    private Long inTotal;
 
-    private String  outTotal;
+    private Long  outTotal;
+
+    private String  curDtm;
 
     @Override
     public String toString() {
@@ -65,6 +67,7 @@ public class CreateNursingIoReuest {
                 ", urineDetails='" + urineDetails + '\'' +
                 ", inTotal='" + inTotal + '\'' +
                 ", outTotal='" + outTotal + '\'' +
+                ", curDtm='" + curDtm + '\'' +
                 '}';
     }
 
