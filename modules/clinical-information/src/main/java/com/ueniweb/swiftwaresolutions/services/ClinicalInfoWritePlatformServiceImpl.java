@@ -10,6 +10,7 @@ import com.ueniweb.swiftwaresolutions.infrastructure.exceptions.NoRecordFoundExc
 import com.ueniweb.swiftwaresolutions.infrastructure.exceptions.NotFoundException;
 import com.ueniweb.swiftwaresolutions.repository.*;
 import com.ueniweb.swiftwaresolutions.request.*;
+import com.ueniweb.swiftwaresolutions.rowmapper.SurgeryChecklistRowMapper;
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -128,6 +129,11 @@ public class ClinicalInfoWritePlatformServiceImpl implements ClinicalInfoWritePl
     private final NursingIoRepository nursingIoRepository;
 
     private final NursingIoRepositoryWrapper nursingIoRepositoryWrapper;
+
+    private final SurgeryChecklistRepository surgeryChecklistRepository;
+
+    private final SurgeryChecklistRepositoryWrapper surgeryChecklistRepositoryWrapper;
+
 
 
 
@@ -861,6 +867,37 @@ public class ClinicalInfoWritePlatformServiceImpl implements ClinicalInfoWritePl
 
             log.debug("END of updateNursingIoReuest() id {} request {}", id, createNursingIoReuest);
             return new Response(nursingIoSheet.getId());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+    @Override
+    public Response saveSurgeryChecklist(CreateSurgeryChecklistReuest createSurgeryChecklistReuest) {
+        try {
+            log.debug("START saveSurgeryChecklist CreateSurgeryChecklistReuest {}", createSurgeryChecklistReuest);
+            final SurgeryCheck surgeryCheck = SurgeryCheck.to(createSurgeryChecklistReuest);
+
+            this.surgeryChecklistRepository.saveAndFlush(surgeryCheck);
+            log.debug("END saveSurgeryChecklist id ");
+            return new Response(surgeryCheck.getId());
+        } catch (Exception e) {
+            log.error("Caught with exception while saveSurgeryChecklist {}", e.getMessage());
+            throw new RuntimeException(e.getMessage());
+        }
+
+
+    }
+    @Transactional
+    @Override
+    public Response updateSurgeryChecklist(Long id, CreateSurgeryChecklistReuest createSurgeryChecklistReuest) {
+        try {
+            log.debug("START of updateSurgeryChecklist() id {} request {}", id, createSurgeryChecklistReuest);
+            final SurgeryCheck surgeryCheck = this.surgeryChecklistRepositoryWrapper.findOneWithNotFoundDetection(id);
+            surgeryCheck.update(createSurgeryChecklistReuest);
+            this.surgeryChecklistRepository.saveAndFlush(surgeryCheck);
+
+            log.debug("END of updateSurgeryChecklist() id {} request {}", id, createSurgeryChecklistReuest);
+            return new Response(surgeryCheck.getId());
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

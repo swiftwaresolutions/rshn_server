@@ -550,5 +550,17 @@ public class ClinicalInformationController {
     public void updateNursingIoSheet(@PathVariable(name = "id") Long id, @RequestBody CreateNursingIoReuest createNursingIoReuest) {
         this.clinicalInfoWritePlatformService.updateNursingIoSheet(id,createNursingIoReuest);
     }
+    @PostMapping("saveSurgeryChecklist")
+    public Response saveSurgeryChecklist(@RequestBody CreateSurgeryChecklistReuest createSurgeryChecklistReuest) {
+        return this.clinicalInfoWritePlatformService.saveSurgeryChecklist(createSurgeryChecklistReuest);
+    }
+    @GetMapping("/fetchSurgeryChecklistByVatId/{vstId}")
+    public List<SurgeryCheckListData> fetchSurgeryChecklistByVatId(@PathVariable(name = "vstId") Long vstId) {
+        return this.clinicalInfoReadPlatformService.fetchSurgeryChecklistByVatId(vstId);
+    }
+    @PutMapping("/updateSurgeryChecklist/{id}")
+    public void updateSurgeryChecklist(@PathVariable(name = "id") Long id, @RequestBody CreateSurgeryChecklistReuest createSurgeryChecklistReuest) {
+        this.clinicalInfoWritePlatformService.updateSurgeryChecklist(id,createSurgeryChecklistReuest);
+    }
 }
 

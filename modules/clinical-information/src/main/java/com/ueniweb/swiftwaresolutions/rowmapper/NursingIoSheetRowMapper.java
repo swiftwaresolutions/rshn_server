@@ -47,11 +47,6 @@ public class NursingIoSheetRowMapper   implements RowMapper<NursingIoData>{
         final Long outTotal        = rs.getLong("outTotal");
         final String curDtm        = rs.getString("curDtm");
 
-
-
-
-
-
         return NursingIoData.createNewInstance(  id,  patId,  visitId,  ipId,  drain,  drainDetails,  inOther,  inOtherDetails,  ivf,  ivfDetails,  nurseDtmIo,
                 oral,  oralDetails,  outOther,  outOtherDetails,  urine,  urineDetails,  inTotal,  outTotal,curDtm);
     }

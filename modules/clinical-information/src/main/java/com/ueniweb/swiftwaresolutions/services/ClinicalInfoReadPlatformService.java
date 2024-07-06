@@ -83,6 +83,8 @@ public interface ClinicalInfoReadPlatformService {
 
     List <NursingIoData>fetchNursingIoByVstId(Long vstId);
 
+    List <SurgeryCheckListData>fetchSurgeryChecklistByVatId(Long vstId);
+
 
 }
 
