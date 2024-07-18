@@ -640,4 +640,23 @@ public class ClinicalInfoReadPlatformServiceImpl implements ClinicalInfoReadPlat
         log.debug("END of fetchSurgeryChecklistByVatId()");
         return this.jdbcTemplate.query(qry, surgeryChecklistRowMapper);
     }
+    public List<IpProcedureCaseSheetData> fetchIpProcedureCaseSheetByVstId(Long vstId) {
+        log.debug("START of fetchIpProcedureCaseSheetByVstId()  vstId{} ", vstId);
+        final IpProcedureCaseSheetRowMapper ipProcedureCaseSheetRowMapper = new IpProcedureCaseSheetRowMapper();
+
+        String qry = "SELECT " + ipProcedureCaseSheetRowMapper.tableSchema() + "WHERE vstId = "+vstId;
+
+        log.debug("END of fetchIpProcedureCaseSheetByVstId()");
+        return this.jdbcTemplate.query(qry, ipProcedureCaseSheetRowMapper);
+    }
+    @Override
+    public List<AldreteScoreChartData> fetchAldreteScoreChartByVstId(Long vstId) {
+        log.debug("START of fetchAldreteScoreChartByVstId()  vstId{} ", vstId);
+        final AldreteScoreChartRowMapper aldreteScoreChartRowMapper = new AldreteScoreChartRowMapper();
+
+        String qry = "SELECT " + aldreteScoreChartRowMapper.tableSchema() + " WHERE visitId = " + vstId;
+
+        log.debug("END of fetchAldreteScoreChartByVstId()");
+        return this.jdbcTemplate.query(qry, aldreteScoreChartRowMapper);
+    }
 }

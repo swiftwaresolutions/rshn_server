@@ -59,7 +59,12 @@ public class SurgeryCheckListData {
 
     private String dtm;
 
-    public SurgeryCheckListData(final Long id,    final Long patId,    final Long visitId,    final Long ipId,    final Long airway,    final Long allergy,    final Long anticipatedBlood,    final Long bloodloss,    final Long confermation,    final Long critical,    final Long equipmentIssues,    final Long equipmentProblems,    final Long imaging,    final Long incision,    final Long marked,    final Long medication,    final Long oximeter,    final Long patientSpecific,    final Long procedures,    final Long prophylaxis,    final Long recovery,    final Long specimen,    final Long sponge,    final Long sterility,    final Long teamMembers,    final Long timeTaken,    final String dtm){
+    private String surgName;
+
+    private Long docId;
+
+
+    public SurgeryCheckListData(final Long id,    final Long patId,    final Long visitId,    final Long ipId,    final Long airway,    final Long allergy,    final Long anticipatedBlood,    final Long bloodloss,    final Long confermation,    final Long critical,    final Long equipmentIssues,    final Long equipmentProblems,    final Long imaging,    final Long incision,    final Long marked,    final Long medication,    final Long oximeter,    final Long patientSpecific,    final Long procedures,    final Long prophylaxis,    final Long recovery,    final Long specimen,    final Long sponge,    final Long sterility,    final Long teamMembers,    final Long timeTaken,    final String dtm,final String surgName ,final Long docId){
 
         this.id=id;
 
@@ -114,9 +119,16 @@ public class SurgeryCheckListData {
         this.timeTaken=timeTaken;
 
         this.dtm=dtm;
+
+        this.surgName=surgName;
+
+        this.docId=docId;
+
+
+
     }
-    public  static SurgeryCheckListData createNewInstance(final Long id,    final Long patId,    final Long visitId,    final Long ipId,    final Long airway,    final Long allergy,    final Long anticipatedBlood,    final Long bloodloss,    final Long confermation,    final Long critical,    final Long equipmentIssues,    final Long equipmentProblems,    final Long imaging,    final Long incision,    final Long marked,    final Long medication,    final Long oximeter,    final Long patientSpecific,    final Long procedures,    final Long prophylaxis,    final Long recovery,    final Long specimen,    final Long sponge,    final Long sterility,    final Long teamMembers,    final Long timeTaken,    final String dtm){
-        return new SurgeryCheckListData( id,     patId,     visitId,     ipId,     airway,     allergy,     anticipatedBlood,     bloodloss,     confermation,     critical,     equipmentIssues,     equipmentProblems,     imaging,     incision,     marked,     medication,     oximeter,     patientSpecific,     procedures,     prophylaxis,     recovery,     specimen,     sponge,     sterility,     teamMembers,     timeTaken,     dtm);
+    public  static SurgeryCheckListData createNewInstance(final Long id,    final Long patId,    final Long visitId,    final Long ipId,    final Long airway,    final Long allergy,    final Long anticipatedBlood,    final Long bloodloss,    final Long confermation,    final Long critical,    final Long equipmentIssues,    final Long equipmentProblems,    final Long imaging,    final Long incision,    final Long marked,    final Long medication,    final Long oximeter,    final Long patientSpecific,    final Long procedures,    final Long prophylaxis,    final Long recovery,    final Long specimen,    final Long sponge,    final Long sterility,    final Long teamMembers,    final Long timeTaken,    final String dtm, final String surgName ,final Long docId){
+        return new SurgeryCheckListData( id,     patId,     visitId,     ipId,     airway,     allergy,     anticipatedBlood,     bloodloss,     confermation,     critical,     equipmentIssues,     equipmentProblems,     imaging,     incision,     marked,     medication,     oximeter,     patientSpecific,     procedures,     prophylaxis,     recovery,     specimen,     sponge,     sterility,     teamMembers,     timeTaken,     dtm,surgName,docId);
     }
 
 }

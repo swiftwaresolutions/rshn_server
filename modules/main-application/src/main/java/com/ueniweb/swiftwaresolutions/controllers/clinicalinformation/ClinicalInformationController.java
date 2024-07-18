@@ -562,5 +562,43 @@ public class ClinicalInformationController {
     public void updateSurgeryChecklist(@PathVariable(name = "id") Long id, @RequestBody CreateSurgeryChecklistReuest createSurgeryChecklistReuest) {
         this.clinicalInfoWritePlatformService.updateSurgeryChecklist(id,createSurgeryChecklistReuest);
     }
+
+    @PostMapping("/saveIpProcedureCaseSheet")
+    public Response saveIpProcedureCaseSheet (@RequestBody CreateIpProcedureCaseSheetRequest createIpProcedureCaseSheetRequest){
+        final AppUser appUser = this.platformSecurityContext.authenticateUser();
+        if (appUser.getUser().getIsDoctor() != 1) {
+            throw new HimsApplicationContextException("Access Only for Doctors !");
+        }
+        return this.clinicalInfoWritePlatformService.saveIpProcedureCaseSheet(createIpProcedureCaseSheetRequest);
+    }
+
+
+    @GetMapping("/fetchIpProcedureCaseSheetByVstId/{vstId}")
+    public List<IpProcedureCaseSheetData> fetchIpProcedureCaseSheetByVstId(@PathVariable(name = "vstId") Long vstId){
+        return this.clinicalInfoReadPlatformService.fetchIpProcedureCaseSheetByVstId(vstId);
+    }
+
+    @PutMapping("/updateIpProcedureCaseSheet/{id}")
+    public void updateIpProcedureCaseSheet(@PathVariable(name = "id") Long id, @RequestBody CreateIpProcedureCaseSheetRequest createIpProcedureCaseSheetRequest) {
+        final AppUser appUser = this.platformSecurityContext.authenticateUser();
+        if (appUser.getUser().getIsDoctor() != 1) {
+            throw new HimsApplicationContextException("Access Only For Doctors !");
+        }
+        this.clinicalInfoWritePlatformService.updateIpProcedureCaseSheet(id, createIpProcedureCaseSheetRequest);
+    }
+
+    @PostMapping("/saveAldreteScoreChart")
+    public Response saveAldreteScoreChart(@RequestBody CreateAldreteScoreChartReuest createAldreteScoreChartReuest) {
+        return this.clinicalInfoWritePlatformService.saveAldreteScoreChart(createAldreteScoreChartReuest);
+    }
+    @GetMapping("/fetchAldreteScoreChartByVatId/{vstId}")
+    public List<AldreteScoreChartData> fetchAldreteScoreChartByVstId(@PathVariable(name = "vstId") Long vstId) {
+        return this.clinicalInfoReadPlatformService.fetchAldreteScoreChartByVstId(vstId);
+    }
+    @PutMapping("/updateAldreteScoreChart/{id}")
+    public void updateAldreteScoreChart(@PathVariable(name = "id") Long id, @RequestBody CreateAldreteScoreChartReuest createAldreteScoreChartReuest) {
+        this.clinicalInfoWritePlatformService.updateAldreteScoreChart(id,createAldreteScoreChartReuest);
+    }
+
 }
 

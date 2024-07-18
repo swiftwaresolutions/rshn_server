@@ -120,6 +120,14 @@ public class SurgeryCheck {
     @Basic(optional = false)
     private String dtm;
 
+    @Column(name = "surgName")
+    @Basic(optional = false)
+    private String surgName;
+
+    @Column(name = "docId")
+    @Basic(optional = false)
+    private Long docId;
+
     public static SurgeryCheck to(final CreateSurgeryChecklistReuest createSurgeryChecklistReuest){
 
         SurgeryCheck surgeryCheck = new SurgeryCheck();
@@ -149,6 +157,9 @@ public class SurgeryCheck {
         surgeryCheck.setTeamMembers(createSurgeryChecklistReuest.getTeamMembers());
         surgeryCheck.setTimeTaken(createSurgeryChecklistReuest.getTimeTaken());
         surgeryCheck.setDtm(DateTimeUtils.convertLocalDateToDateTimeFormat(LocalDateTime.now()));
+        surgeryCheck.setSurgName(createSurgeryChecklistReuest.getSurgName());
+        surgeryCheck.setDocId(createSurgeryChecklistReuest.getDocId());
+
 
         return surgeryCheck;
     }
@@ -180,8 +191,8 @@ public class SurgeryCheck {
         this.setTeamMembers(createSurgeryChecklistReuest.getTeamMembers());
         this.setTimeTaken(createSurgeryChecklistReuest.getTimeTaken());
         this.setDtm(DateTimeUtils.convertLocalDateToDateTimeFormat(LocalDateTime.now()));
-
-
+        this.setSurgName(createSurgeryChecklistReuest.getSurgName());
+        this.setDocId(createSurgeryChecklistReuest.getDocId());
     }
 
 

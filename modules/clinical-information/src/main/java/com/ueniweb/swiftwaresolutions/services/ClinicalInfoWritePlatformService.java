@@ -90,5 +90,13 @@ public interface ClinicalInfoWritePlatformService {
 
     Response updateSurgeryChecklist(final Long id, final CreateSurgeryChecklistReuest createSurgeryChecklistReuest);
 
+    Response saveIpProcedureCaseSheet(final CreateIpProcedureCaseSheetRequest createIpProcedureCaseSheetRequest);
+
+    Response updateIpProcedureCaseSheet(final Long id, final CreateIpProcedureCaseSheetRequest createIpProcedureCaseSheetRequest);
+
+    Response saveAldreteScoreChart(final CreateAldreteScoreChartReuest createAldreteScoreChartReuest);
+
+    Response updateAldreteScoreChart(final Long id, final CreateAldreteScoreChartReuest createAldreteScoreChartReuest);
+
 
 }

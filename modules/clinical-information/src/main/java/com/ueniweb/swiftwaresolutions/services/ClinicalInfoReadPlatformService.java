@@ -85,6 +85,9 @@ public interface ClinicalInfoReadPlatformService {
 
     List <SurgeryCheckListData>fetchSurgeryChecklistByVatId(Long vstId);
 
+    List<IpProcedureCaseSheetData> fetchIpProcedureCaseSheetByVstId(Long vstId);
+
+    List <AldreteScoreChartData>fetchAldreteScoreChartByVstId(Long vstId);
 
 }
 

@@ -23,11 +23,12 @@ public class PatientReadPlatformServiceImpl implements PatientReadPlatformServic
     public List<PatientData> fetchAllPatientData() {
         try {
             final PatientRowMapper patientRowMapper = new PatientRowMapper();
-            String whereCondition = " WHERE c.is_cardin_rack = 0 AND b.date BETWEEN CURRENT_DATE - 1 AND CURRENT_DATE AND c.loc_id = 1 " +
-                    "GROUP BY c.display_number, b.id \n" +
+            String whereCondition = " WHERE c.is_cardin_rack = 0 AND c.is_in_ip=0 AND b.date = CURRENT_DATE AND c.is_blocked=0 AND c.loc_id = 1 " +
+                    "GROUP BY DATE(b.date),c.display_number,b.id\n" +
                     "ORDER BY (CASE WHEN d.dept_id = '' THEN 0 ELSE 1 END),(CASE WHEN u.id = '' THEN 0 ELSE 1 END),d.name,b.token_no_doctor \n";
             //String qry = "SELECT " + patientRowMapper.schema() + whereCondition + " LIMIT ? OFFSET ? ";
             String qry = "\n SELECT " + patientRowMapper.schema() + whereCondition;
+            System.out.print(qry);
             String countQry = "SELECT count(*)  " +
                     "    FROM rec_patient_details p  INNER JOIN rec_patient_opvisits b ON p.pat_id = b.pat_id  INNER JOIN rec_patient c ON b.pat_id = c.id   WHERE \n" +
                     "    c.is_cardin_rack = 0 \n" +

@@ -60,6 +60,11 @@ public class CreateSurgeryChecklistReuest {
 
     private String dtm;
 
+    private String surgName;
+
+    private Long docId;
+
+
     @Override
     public String toString() {
         return "CreateSurgeryChecklistReuest{" +
@@ -90,6 +95,8 @@ public class CreateSurgeryChecklistReuest {
                 ", teamMembers=" + teamMembers +
                 ", timeTaken=" + timeTaken +
                 ", dtm=" + dtm +
+                ", surgName=" + surgName +
+                ", docId=" + docId +
                 '}';
     }
 

@@ -134,7 +134,13 @@ public class ClinicalInfoWritePlatformServiceImpl implements ClinicalInfoWritePl
 
     private final SurgeryChecklistRepositoryWrapper surgeryChecklistRepositoryWrapper;
 
+    private final IpProcedureCaseSheetRepository ipProcedureCaseSheetRepository;
 
+    private final IpProcedureCaseSheetRepositoryWrapper ipProcedureCaseSheetRepositoryWrapper;
+
+    private final AldreteScoreChartRepository aldreteScoreChartRepository;
+
+    private final AldreteScoreChartRepositoryWrapper aldreteScoreChartRepositoryWrapper;
 
 
     @Transactional
@@ -898,6 +904,75 @@ public class ClinicalInfoWritePlatformServiceImpl implements ClinicalInfoWritePl
 
             log.debug("END of updateSurgeryChecklist() id {} request {}", id, createSurgeryChecklistReuest);
             return new Response(surgeryCheck.getId());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Transactional
+    @Override
+    public Response saveIpProcedureCaseSheet(final CreateIpProcedureCaseSheetRequest createIpProcedureCaseSheetRequest){
+        try {
+            log.debug("START saveGeneralCaseSheet request {}", createIpProcedureCaseSheetRequest);
+            if (createIpProcedureCaseSheetRequest.getVisitId()==0 || createIpProcedureCaseSheetRequest.getPatientId()==0){
+                throw new NullPointerException("Choose Proper Patient!");
+            }
+            final IpProcedureCaseSheet newIpProcedureCaseSheet = IpProcedureCaseSheet.to(createIpProcedureCaseSheetRequest);
+            ipProcedureCaseSheetRepository.saveAndFlush(newIpProcedureCaseSheet);
+            log.debug("End saveIpProcedureCaseSheet");
+            return new Response(newIpProcedureCaseSheet.getId());
+        }
+        catch (Exception e) {
+            log.error("Caught with exception while saving GeneralCaseSheet {}", e.getMessage());
+            throw new RuntimeException(e);
+
+        }
+    }
+
+    @Transactional
+    @Override
+    public Response updateIpProcedureCaseSheet(Long id, CreateIpProcedureCaseSheetRequest createIpProcedureCaseSheetRequest) {
+        try {
+            log.debug("START updateIpProcedureCaseSheet() id {} request {}", id, createIpProcedureCaseSheetRequest);
+            final IpProcedureCaseSheet ipProcedureCaseSheet = this.ipProcedureCaseSheetRepositoryWrapper.findOneWithNotFoundDetection(id);
+            ipProcedureCaseSheet.update(createIpProcedureCaseSheetRequest);
+            this.ipProcedureCaseSheetRepository.saveAndFlush(ipProcedureCaseSheet);
+
+            log.debug("END of updateIpProcedureCaseSheet() id {} request {}", id, createIpProcedureCaseSheetRequest);
+            return new Response(ipProcedureCaseSheet.getId());
+        }
+        catch (Exception e){
+            throw new RuntimeException(e);
+        }
+    }
+    @Override
+    public Response saveAldreteScoreChart(CreateAldreteScoreChartReuest createAldreteScoreChartReuest) {
+        try {
+            log.debug("START saveAldreteScoreChart CreateAldreteScoreChartReuest {}", createAldreteScoreChartReuest);
+            final AldreteScoreChart aldreteScoreChart = AldreteScoreChart.to(createAldreteScoreChartReuest);
+
+            this.aldreteScoreChartRepository.saveAndFlush(aldreteScoreChart);
+            log.debug("END saveAldreteScoreChart id ");
+            return new Response(aldreteScoreChart.getId());
+        } catch (Exception e) {
+            log.error("Caught with exception while saveSurgeryChecklist {}", e.getMessage());
+            throw new RuntimeException(e.getMessage());
+        }
+
+
+    }
+
+    @Transactional
+    @Override
+    public Response updateAldreteScoreChart(Long id, CreateAldreteScoreChartReuest createAldreteScoreChartReuest) {
+        try {
+            log.debug("START of updateAldreteScoreChart() id {} request {}", id, createAldreteScoreChartReuest);
+            final AldreteScoreChart aldreteScoreChart = this.aldreteScoreChartRepositoryWrapper.findOneWithNotFoundDetection(id);
+            aldreteScoreChart.update(createAldreteScoreChartReuest);
+            this.aldreteScoreChartRepository.saveAndFlush(aldreteScoreChart);
+
+            log.debug("END of updateSurgeryChecklist() id {} request {}", id, createAldreteScoreChartReuest);
+            return new Response(aldreteScoreChart.getId());
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

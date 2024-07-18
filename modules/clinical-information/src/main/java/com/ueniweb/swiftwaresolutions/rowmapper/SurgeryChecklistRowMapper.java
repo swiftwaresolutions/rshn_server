@@ -19,7 +19,7 @@ public class SurgeryChecklistRowMapper implements RowMapper<SurgeryCheckListData
 
     public String tableSchema() {
         final StringBuilder builder = new StringBuilder(200);
-        builder.append("a.id,a.patId,a.visitId,a.ipId,a.airway,a.allergy,a.anticipatedBlood,a.bloodloss,a.confermation,a.critical,a.equipmentIssues,a.equipmentProblems,a.imaging,a.incision,a.marked,a.medication,a.oximeter,a.patientSpecific,a.procedures,a.prophylaxis,a.recovery,a.specimen,a.sponge,a.sterility,a.teamMembers,a.timeTaken,a.dtm");
+        builder.append("a.id,a.patId,a.visitId,a.ipId,a.airway,a.allergy,a.anticipatedBlood,a.bloodloss,a.confermation,a.critical,a.equipmentIssues,a.equipmentProblems,a.imaging,a.incision,a.marked,a.medication,a.oximeter,a.patientSpecific,a.procedures,a.prophylaxis,a.recovery,a.specimen,a.sponge,a.sterility,a.teamMembers,a.timeTaken,a.dtm,a.surgName,a.docId");
         builder.append(this.schema);
         return builder.toString();
     }
@@ -53,12 +53,14 @@ public class SurgeryChecklistRowMapper implements RowMapper<SurgeryCheckListData
         final Long teamMembers = rs.getLong("teamMembers");
         final Long timeTaken = rs.getLong("timeTaken");
         final String dtm = rs.getString("dtm");
+        final String surgName=rs.getString("surgName");
+        final Long docId=rs.getLong("docId");
 
 
         return SurgeryCheckListData.createNewInstance(id, patId, visitId, ipId, airway, allergy,
                 anticipatedBlood, bloodloss, confermation, critical, equipmentIssues, equipmentProblems,
                 imaging, incision, marked, medication, oximeter, patientSpecific, procedures, prophylaxis,
-                recovery, specimen, sponge, sterility, teamMembers, timeTaken, dtm);
+                recovery, specimen, sponge, sterility, teamMembers, timeTaken, dtm,surgName,docId);
     }
 
 }
