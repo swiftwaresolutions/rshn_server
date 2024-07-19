@@ -11,7 +11,7 @@ public class CreateIpProcedureCaseSheetRequest {
 
     private Long ipId;
 
-    private Long consultantId;
+    private String consultantName;
 
     private String date;
 
@@ -37,6 +37,8 @@ public class CreateIpProcedureCaseSheetRequest {
 
     private String progressPlan;
 
+    private Long consultantId;
+
     private Long isCancelled;
 
     @Override
@@ -45,7 +47,7 @@ public class CreateIpProcedureCaseSheetRequest {
                 "patientId=" + patientId +
                 ", visitId=" + visitId +
                 ", ipId=" + ipId +
-                ", consultantId=" + consultantId +
+                ", consultantName='" + consultantName + '\'' +
                 ", date='" + date + '\'' +
                 ", time='" + time + '\'' +
                 ", temperature='" + temperature + '\'' +
@@ -58,6 +60,7 @@ public class CreateIpProcedureCaseSheetRequest {
                 ", bmi='" + bmi + '\'' +
                 ", progressNotes='" + progressNotes + '\'' +
                 ", progressPlan='" + progressPlan + '\'' +
+                ", consultantId='" + consultantId + '\'' +
                 ", isCancelled=" + isCancelled +
                 '}';
     }

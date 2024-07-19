@@ -644,7 +644,7 @@ public class ClinicalInfoReadPlatformServiceImpl implements ClinicalInfoReadPlat
         log.debug("START of fetchIpProcedureCaseSheetByVstId()  vstId{} ", vstId);
         final IpProcedureCaseSheetRowMapper ipProcedureCaseSheetRowMapper = new IpProcedureCaseSheetRowMapper();
 
-        String qry = "SELECT " + ipProcedureCaseSheetRowMapper.tableSchema() + "WHERE vstId = "+vstId;
+        String qry = "SELECT " + ipProcedureCaseSheetRowMapper.tableSchema() + "WHERE vstId = "+vstId +" AND isCancelled =0 ORDER BY id DESC;";
 
         log.debug("END of fetchIpProcedureCaseSheetByVstId()");
         return this.jdbcTemplate.query(qry, ipProcedureCaseSheetRowMapper);

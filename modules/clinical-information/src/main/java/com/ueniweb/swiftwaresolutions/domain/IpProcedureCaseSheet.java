@@ -25,9 +25,9 @@ public class IpProcedureCaseSheet {
     @Basic(optional = false)
     private Long ipId;
 
-    @Column(name = "consultantId", nullable = false)
+    @Column(name = "consultantName", nullable = false)
     @Basic(optional = false)
-    private Long consultantId;
+    private String consultantName;
 
     @Column(name = "date")
     private String date;
@@ -65,6 +65,10 @@ public class IpProcedureCaseSheet {
     @Column(name = "progressPlan", columnDefinition = "TEXT")
     private String progressPlan;
 
+    @Column(name = "consultantId", nullable = false)
+    @Basic(optional = false)
+    private Long consultantId;
+
     @Column(name = "isCancelled")
     private Long isCancelled;
 
@@ -74,7 +78,7 @@ public class IpProcedureCaseSheet {
         ipProcedureCaseSheet.setPatientId(createIpProcedureCaseSheetRequest.getPatientId());
         ipProcedureCaseSheet.setVisitId(createIpProcedureCaseSheetRequest.getVisitId());
         ipProcedureCaseSheet.setIpId(createIpProcedureCaseSheetRequest.getIpId());
-        ipProcedureCaseSheet.setConsultantId(createIpProcedureCaseSheetRequest.getConsultantId());
+        ipProcedureCaseSheet.setConsultantName(createIpProcedureCaseSheetRequest.getConsultantName());
         ipProcedureCaseSheet.setDate(createIpProcedureCaseSheetRequest.getDate());
         ipProcedureCaseSheet.setTime(createIpProcedureCaseSheetRequest.getTime());
         ipProcedureCaseSheet.setTemperature(createIpProcedureCaseSheetRequest.getTemperature());
@@ -87,6 +91,7 @@ public class IpProcedureCaseSheet {
         ipProcedureCaseSheet.setBmi(createIpProcedureCaseSheetRequest.getBmi());
         ipProcedureCaseSheet.setProgressNotes(createIpProcedureCaseSheetRequest.getProgressNotes());
         ipProcedureCaseSheet.setProgressPlan(createIpProcedureCaseSheetRequest.getProgressPlan());
+        ipProcedureCaseSheet.setConsultantId(createIpProcedureCaseSheetRequest.getConsultantId());
         ipProcedureCaseSheet.setIsCancelled(createIpProcedureCaseSheetRequest.getIsCancelled());
         return ipProcedureCaseSheet;
     }
@@ -95,7 +100,7 @@ public class IpProcedureCaseSheet {
         this.patientId     = createIpProcedureCaseSheetRequest.getPatientId();
         this.visitId       = createIpProcedureCaseSheetRequest.getVisitId();
         this.ipId          = createIpProcedureCaseSheetRequest.getIpId();
-        this.consultantId  = createIpProcedureCaseSheetRequest.getConsultantId();
+        this.consultantName = createIpProcedureCaseSheetRequest.getConsultantName();
         this.date          = createIpProcedureCaseSheetRequest.getDate();
         this.time          = createIpProcedureCaseSheetRequest.getTime();
         this.temperature   = createIpProcedureCaseSheetRequest.getTemperature();
@@ -108,6 +113,7 @@ public class IpProcedureCaseSheet {
         this.bmi           = createIpProcedureCaseSheetRequest.getBmi();
         this.progressNotes = createIpProcedureCaseSheetRequest.getProgressNotes();
         this.progressPlan  = createIpProcedureCaseSheetRequest.getProgressPlan();
+        this.consultantId  = createIpProcedureCaseSheetRequest.getConsultantId();
         this.isCancelled   = createIpProcedureCaseSheetRequest.getIsCancelled();
     }
 

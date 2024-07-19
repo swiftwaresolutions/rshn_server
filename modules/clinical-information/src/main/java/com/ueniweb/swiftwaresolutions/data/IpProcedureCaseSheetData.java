@@ -13,7 +13,7 @@ public class IpProcedureCaseSheetData {
 
     private Long ipId;
 
-    private Long consultantId;
+    private String consultantName;
 
     private String date;
 
@@ -39,17 +39,19 @@ public class IpProcedureCaseSheetData {
 
     private String progressPlan;
 
+    private Long consultantId;
+
     private Long isCancelled;
 
-    public IpProcedureCaseSheetData(Long id, Long patId, Long vstId, Long ipId, Long consultantId, String date, String time,
+    public IpProcedureCaseSheetData(Long id, Long patId, Long vstId, Long ipId, String consultantName, String date, String time,
                                     String temperature, String pulse, String rr, String bp, String spo2, String height,
-                                    String weight, String bmi, String progressNotes, String progressPlan, Long isCancelled){
+                                    String weight, String bmi, String progressNotes, String progressPlan, Long consultantId, Long isCancelled){
 
         this.id            = id;
         this.patId         = patId;
         this.vstId         = vstId;
         this.ipId          = ipId;
-        this.consultantId  = consultantId;
+        this.consultantName  = consultantName;
         this.date          = date;
         this.time          = time;
         this.temperature   = temperature;
@@ -62,14 +64,15 @@ public class IpProcedureCaseSheetData {
         this.bmi           = bmi;
         this.progressNotes = progressNotes;
         this.progressPlan  = progressPlan;
+        this.consultantId  = consultantId;
         this.isCancelled   = isCancelled;
     }
 
-    public static IpProcedureCaseSheetData newInstance(Long id, Long patId, Long vstId, Long ipId, Long consultantId, String date, String time,
+    public static IpProcedureCaseSheetData newInstance(Long id, Long patId, Long vstId, Long ipId, String consultantName, String date, String time,
                                                        String temperature, String pulse,String rr, String bp, String spo2, String height,
-                                                       String weight, String bmi, String progressNotes, String progressPlan, Long isCancelled){
+                                                       String weight, String bmi, String progressNotes, String progressPlan, Long consultantId, Long isCancelled){
 
-        return new IpProcedureCaseSheetData(id, patId, vstId, ipId, consultantId, date, time, temperature, pulse, rr, bp, spo2, height,
-                weight, bmi, progressNotes, progressPlan, isCancelled);
+        return new IpProcedureCaseSheetData(id, patId, vstId, ipId, consultantName, date, time, temperature, pulse, rr, bp, spo2, height,
+                weight, bmi, progressNotes, progressPlan, consultantId, isCancelled);
     }
 }
