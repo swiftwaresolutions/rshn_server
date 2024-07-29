@@ -1,6 +1,5 @@
 package com.ueniweb.swiftwaresolutions.service;
 
-import com.ueniweb.swiftwaresolutions.core.services.Page;
 import com.ueniweb.swiftwaresolutions.core.services.PaginationHelper;
 import com.ueniweb.swiftwaresolutions.data.PatientData;
 import com.ueniweb.swiftwaresolutions.data.PatientIpData;
@@ -46,9 +45,10 @@ public class PatientReadPlatformServiceImpl implements PatientReadPlatformServic
         try {
             final IpPatientsRowMapper ipPatientsRowMapper = new IpPatientsRowMapper();
             String whereCondition = " a1.pat_id = a2.pat_id AND a2.id = a3.opvisit_id AND a3.id = a4.ip_id AND \n" +
-                    "  a4.rb_id = a6.id AND a6.ward_id = a5.id AND a4.is_dis = 0 AND a3.is_dis = 0";
+               //     "  a4.rb_id = a6.id AND a6.ward_id = a5.id AND a4.is_dis = 0 AND a3.is_dis = 0";
+                        "  a4.rb_id = a6.id AND a6.ward_id = a5.id AND a3.date BETWEEN (CURRENT_DATE-15) AND CURRENT_DATE";
             String qry = " SELECT " + ipPatientsRowMapper.schema() + "FROM " + ipPatientsRowMapper.tableSchema() + "WHERE " + whereCondition;
-
+            System.out.print(qry);
             return this.jdbcTemplate.query(qry, ipPatientsRowMapper);
 
         } catch (Exception e) {

@@ -54,6 +54,9 @@ public class User {
     @Column(name = "is_admin")
     private int is_admin;
 
+    @Column(name = "is_nurse")
+    private int isNurse;
+
     public UserDTO to() {
         UserDTO userDTO = new UserDTO();
         ModelMapper modelMapper = new ModelMapper();

@@ -43,6 +43,7 @@ public class IpPatientsRowMapper implements RowMapper<PatientIpData> {
         final String ward = rs.getString("ward");
         final String bedNo = rs.getString("bedNo");
         final String admissionDate = rs.getString("admissionDate");
+        final String dDate = rs.getString("dDate");
         final Long visitId = rs.getLong("visitId");
         final Long patientId = rs.getLong("patientId");
         final String age = rs.getString("age");
@@ -51,6 +52,6 @@ public class IpPatientsRowMapper implements RowMapper<PatientIpData> {
         final String address = rs.getString("address");
         final String guardianName = rs.getString("guardianName");
         final String gType = rs.getString("gType");
-        return PatientIpData.newInstance(displayNumber,ipNo,ipId,name,ward,bedNo,admissionDate,visitId,patientId,age,gender,doctorId,address,guardianName,gType);
+        return PatientIpData.newInstance(displayNumber,ipNo,ipId,name,ward,bedNo,admissionDate,dDate,visitId,patientId,age,gender,doctorId,address,guardianName,gType);
     }
 }

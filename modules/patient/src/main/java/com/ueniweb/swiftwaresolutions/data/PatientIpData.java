@@ -19,6 +19,8 @@ public class PatientIpData {
 
     private final String admissionDate;
 
+    private final String dDate;
+
     private final Long visitId;
 
     private final Long patientId;
@@ -37,7 +39,7 @@ public class PatientIpData {
 
 
     public PatientIpData(String displayNumber, String ipNo,Long ipId, String name, String ward,
-                       String bedNo, String admissionDate,Long visitId,Long patientId,String age,String gender,Long doctorId,String address,String guardianName,String gType) {
+                       String bedNo, String admissionDate, String dDate,Long visitId,Long patientId,String age,String gender,Long doctorId,String address,String guardianName,String gType) {
         this.displayNumber = displayNumber;
         this.ipNo = ipNo;
         this.ipId = ipId;
@@ -45,6 +47,7 @@ public class PatientIpData {
         this.ward = ward;
         this.bedNo = bedNo;
         this.admissionDate = admissionDate;
+        this.dDate=dDate;
         this.visitId = visitId;
         this.patientId = patientId;
         this.age = age;
@@ -56,8 +59,8 @@ public class PatientIpData {
     }
 
     public static PatientIpData newInstance(String displayNumber, String ipNo,Long ipId, String name, String ward,
-                                          String bedNo, String admissionDate,Long visitId,Long patientId,String age,String gender,Long doctorId,String address,String guardianName,String gType) {
-        return new PatientIpData(displayNumber,ipNo,ipId,name,ward,bedNo,admissionDate,visitId,patientId,age,gender,doctorId,address,guardianName,gType);
+                                          String bedNo, String admissionDate,String dDate,Long visitId,Long patientId,String age,String gender,Long doctorId,String address,String guardianName,String gType) {
+        return new PatientIpData(displayNumber,ipNo,ipId,name,ward,bedNo,admissionDate,dDate,visitId,patientId,age,gender,doctorId,address,guardianName,gType);
     }
 
 }

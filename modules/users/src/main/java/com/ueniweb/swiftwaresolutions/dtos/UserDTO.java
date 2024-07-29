@@ -15,4 +15,6 @@ public class UserDTO {
 
    private int isDoctor;
 
+   private int isNurse;
+
 }
