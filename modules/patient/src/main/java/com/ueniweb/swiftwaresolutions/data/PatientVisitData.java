@@ -16,5 +16,4 @@ public class PatientVisitData {
 
    // private GeneralCaseSheetData generalCaseSheetData;
 
-
 }

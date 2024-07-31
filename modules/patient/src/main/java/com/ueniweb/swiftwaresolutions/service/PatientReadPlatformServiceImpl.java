@@ -48,7 +48,6 @@ public class PatientReadPlatformServiceImpl implements PatientReadPlatformServic
                //     "  a4.rb_id = a6.id AND a6.ward_id = a5.id AND a4.is_dis = 0 AND a3.is_dis = 0";
                         "  a4.rb_id = a6.id AND a6.ward_id = a5.id AND a3.date BETWEEN (CURRENT_DATE-15) AND CURRENT_DATE";
             String qry = " SELECT " + ipPatientsRowMapper.schema() + "FROM " + ipPatientsRowMapper.tableSchema() + "WHERE " + whereCondition;
-            System.out.print(qry);
             return this.jdbcTemplate.query(qry, ipPatientsRowMapper);
 
         } catch (Exception e) {
