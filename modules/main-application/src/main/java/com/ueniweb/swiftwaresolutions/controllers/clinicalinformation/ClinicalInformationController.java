@@ -600,5 +600,30 @@ public class ClinicalInformationController {
         this.clinicalInfoWritePlatformService.updateAldreteScoreChart(id,createAldreteScoreChartReuest);
     }
 
+    @PostMapping("/saveDermatologyCaseSheet")
+    public Response saveDermatologyCaseSheet(@RequestBody CreateDermatologyCaseSheetRequest createDermatologyCaseSheetRequest) {
+        final AppUser appUser = this.platformSecurityContext.authenticateUser();
+        if (appUser.getUser().getIsDoctor() != 1) {
+            throw new HimsApplicationContextException("Access Only For Doctors !");
+        }
+        return this.clinicalInfoWritePlatformService.saveDermatologyCaseSheet(createDermatologyCaseSheetRequest);
+    }
+
+    @GetMapping("/fetchDermatologyCaseSheetByVstId/{vstId}")
+    public Map<String, Object> fetchDermatologyCaseSheetByVstId(@PathVariable(name = "vstId") Long vstId) {
+        return this.clinicalInfoReadPlatformService.fetchDermatologyCaseSheetByVstId(vstId);
+    }
+
+    @PutMapping("/updateDermatologyCaseSheet/{id}/{caseSheetType}")
+    public void updateDermatologyCaseSheet(@PathVariable(name = "id") Long id,
+                                           @PathVariable(name = "caseSheetType") Integer caseSheetType,
+                                           @RequestBody CreateDermatologyCaseSheetRequest createDermatologyCaseSheetRequest) {
+        final AppUser appUser = this.platformSecurityContext.authenticateUser();
+        if (appUser.getUser().getIsDoctor() != 1) {
+            throw new HimsApplicationContextException("Access Only For Doctors !");
+        }
+        this.clinicalInfoWritePlatformService.updateDermatologyCaseSheet(id,createDermatologyCaseSheetRequest,caseSheetType);
+    }
+
 }
 

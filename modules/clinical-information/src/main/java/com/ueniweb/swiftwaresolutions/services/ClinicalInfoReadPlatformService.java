@@ -89,5 +89,7 @@ public interface ClinicalInfoReadPlatformService {
 
     List <AldreteScoreChartData>fetchAldreteScoreChartByVstId(Long vstId);
 
+    Map<String, Object> fetchDermatologyCaseSheetByVstId(Long vstId);
+
 }
 

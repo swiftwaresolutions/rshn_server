@@ -659,4 +659,30 @@ public class ClinicalInfoReadPlatformServiceImpl implements ClinicalInfoReadPlat
         log.debug("END of fetchAldreteScoreChartByVstId()");
         return this.jdbcTemplate.query(qry, aldreteScoreChartRowMapper);
     }
+
+    @Override
+    public Map<String, Object> fetchDermatologyCaseSheetByVstId(Long vstId) {
+        log.debug("START of fetchDermatologyCaseSheetByVstId() vstId{} ", vstId);
+        final DermatologyCaseSheetRowMapper dermatologyCaseSheetRowMapper = new DermatologyCaseSheetRowMapper();
+        String whereCondition = " WHERE cs.vstId = " + vstId;
+
+        String qry = " SELECT " + dermatologyCaseSheetRowMapper.schema() + whereCondition;
+
+        log.debug("END of fetchDermatologyCaseSheetByVstId()");
+        final List<DermatologyCaseSheetData> dermatologyCaseSheetDataList = this.jdbcTemplate.query(qry, dermatologyCaseSheetRowMapper);
+        for (DermatologyCaseSheetData dermatologyCaseSheetData : dermatologyCaseSheetDataList) {
+            final List<ComplaintDetailsData> complaintDataList = fetchComplaintDetailsByVisitId(dermatologyCaseSheetData.getVstId(), 6);
+            dermatologyCaseSheetData.setComplaintDataList(complaintDataList);
+            final List<DiagnosisData> diagnosisDataList = fetchDiagnosisDetailsByVisitId(dermatologyCaseSheetData.getVstId(), 6);
+            dermatologyCaseSheetData.setDiagnosisDetailsData(diagnosisDataList);
+        }
+        Map<String, Object> dermatologyCaseSheetMap = new HashMap<>();
+        dermatologyCaseSheetMap.put("status", !dermatologyCaseSheetDataList.isEmpty());
+        if (dermatologyCaseSheetDataList.isEmpty()) {
+            dermatologyCaseSheetMap.put("message", "No Details Found");
+        } else {
+            dermatologyCaseSheetMap.put("data", dermatologyCaseSheetDataList);
+        }
+        return dermatologyCaseSheetMap;
+    }
 }

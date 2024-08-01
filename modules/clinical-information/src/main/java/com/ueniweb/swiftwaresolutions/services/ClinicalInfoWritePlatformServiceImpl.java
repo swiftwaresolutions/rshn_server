@@ -142,6 +142,14 @@ public class ClinicalInfoWritePlatformServiceImpl implements ClinicalInfoWritePl
 
     private final AldreteScoreChartRepositoryWrapper aldreteScoreChartRepositoryWrapper;
 
+    private final DermatologyCaseSheetRepository dermatologyCaseSheetRepository;
+
+    private final DermatologyCaseSheetRepositoryWrapper dermatologyCaseSheetRepositoryWrapper;
+
+    private final DermatologyComplainDetailsRepository dermatologyComplainDetailsRepository;
+
+    private final DermatologyDiagnosisDetailsRepository dermatologyDiagnosisDetailsRepository;
+
 
     @Transactional
     @Override
@@ -973,6 +981,64 @@ public class ClinicalInfoWritePlatformServiceImpl implements ClinicalInfoWritePl
 
             log.debug("END of updateSurgeryChecklist() id {} request {}", id, createAldreteScoreChartReuest);
             return new Response(aldreteScoreChart.getId());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Transactional
+    @Override
+    public Response saveDermatologyCaseSheet(final CreateDermatologyCaseSheetRequest createDermatologyCaseSheetRequest) {
+        try {
+            log.debug("START saveDermatologyCaseSheet request {}", createDermatologyCaseSheetRequest);
+            this.caseSheetValidator.validateComplaintData(createDermatologyCaseSheetRequest.getCreateComplaintDetailsRequestList());
+            //this.caseSheetValidator.DermatologyCaseSheetDate(createDermatologyCaseSheetRequest);
+            if (createDermatologyCaseSheetRequest.getVisitId()==0 || createDermatologyCaseSheetRequest.getPatientId() ==0) {
+                throw new NullPointerException("Choose Proper Patient!");
+            }
+
+            final DermatologyCaseSheet newDermatologyCaseSheet = DermatologyCaseSheet.to(createDermatologyCaseSheetRequest);
+            newDermatologyCaseSheet.setDermatologyComplaintDetailsList(DermatologyComplaintDetails.to(newDermatologyCaseSheet,createDermatologyCaseSheetRequest.getCreateComplaintDetailsRequestList()));
+            newDermatologyCaseSheet.setDermatologyDiagnosisDetailsList(DermatologyDiagnosisDetails.to(newDermatologyCaseSheet,createDermatologyCaseSheetRequest.getCreateDiagnosisDetailsRequestList()));
+            dermatologyCaseSheetRepository.saveAndFlush(newDermatologyCaseSheet);
+            log.debug("END saveDermatologyCaseSheet id ");
+            return new Response(newDermatologyCaseSheet.getId());
+        } catch (Exception e) {
+            log.error("Caught with exception while saving GeneralCaseSheet {}", e.getMessage());
+            throw new RuntimeException(e);
+
+        }
+
+    }
+
+    @Transactional
+    @Override
+    public Response updateDermatologyCaseSheet(Long id, CreateDermatologyCaseSheetRequest createDermatologyCaseSheetRequest,Integer caseSheetType) {
+        try {
+            log.debug("START of updateDermatologyCaseSheet() id {} request {} caseSheetType{}", id, createDermatologyCaseSheetRequest,caseSheetType);
+            final DermatologyCaseSheet dermatologyCaseSheet = this.dermatologyCaseSheetRepositoryWrapper.findOneWithNotFoundDetection(id);
+            dermatologyCaseSheet.update(createDermatologyCaseSheetRequest);
+            this.dermatologyCaseSheetRepository.saveAndFlush(dermatologyCaseSheet);
+
+            final List<DermatologyComplaintDetails> complaintDetailsList = this.dermatologyComplainDetailsRepository.fetchDermatologyComplaintDetailsBycaseSheetId(dermatologyCaseSheet.getId(),caseSheetType);
+            for (DermatologyComplaintDetails dermatologyComplaintDetails : complaintDetailsList) {
+                dermatologyComplaintDetails.setIsValid(0L);
+                dermatologyComplainDetailsRepository.save(dermatologyComplaintDetails);
+            }
+
+
+            final List<DermatologyDiagnosisDetails> dermatologyDiagnosisDetailsList = this.dermatologyDiagnosisDetailsRepository.fetchDermatologyDiagnosisDetailsBycaseSheetId(dermatologyCaseSheet.getId());
+            for (DermatologyDiagnosisDetails dermatologyDiagnosisDetails : dermatologyDiagnosisDetailsList) {
+                dermatologyDiagnosisDetails.setIsValid(0L);
+                dermatologyDiagnosisDetailsRepository.save(dermatologyDiagnosisDetails);
+            }
+
+            dermatologyCaseSheet.setDermatologyComplaintDetailsList(DermatologyComplaintDetails.to(dermatologyCaseSheet,createDermatologyCaseSheetRequest.getCreateComplaintDetailsRequestList()));
+            dermatologyCaseSheet.setDermatologyDiagnosisDetailsList(DermatologyDiagnosisDetails.to(dermatologyCaseSheet, createDermatologyCaseSheetRequest.getCreateDiagnosisDetailsRequestList()));
+            dermatologyCaseSheetRepository.saveAndFlush(dermatologyCaseSheet);
+
+            log.debug("END of updateDermatologyCaseSheet() id {} request {}", id, createDermatologyCaseSheetRequest);
+            return new Response(dermatologyCaseSheet.getId());
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

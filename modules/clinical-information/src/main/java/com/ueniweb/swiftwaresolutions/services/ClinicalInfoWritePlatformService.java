@@ -98,5 +98,9 @@ public interface ClinicalInfoWritePlatformService {
 
     Response updateAldreteScoreChart(final Long id, final CreateAldreteScoreChartReuest createAldreteScoreChartReuest);
 
+    Response saveDermatologyCaseSheet(final CreateDermatologyCaseSheetRequest createDermatologyCaseSheetRequest);
+
+    Response updateDermatologyCaseSheet(final Long id, final CreateDermatologyCaseSheetRequest createDermatologyCaseSheetRequest,final Integer caseSheetType);
+
 
 }
