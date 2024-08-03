@@ -1,12 +1,15 @@
 package com.ueniweb.swiftwaresolutions.service;
 
 import com.ueniweb.swiftwaresolutions.data.PatientVisitData;
+import com.ueniweb.swiftwaresolutions.data.PrePatientData;
 import com.ueniweb.swiftwaresolutions.domain.*;
 import com.ueniweb.swiftwaresolutions.infrastructure.exceptions.NotFoundException;
 import com.ueniweb.swiftwaresolutions.repository.DepartmentRepositoryWrapper;
 import com.ueniweb.swiftwaresolutions.repository.PatientOpVisitRepositoryWrapper;
 import com.ueniweb.swiftwaresolutions.repository.PatientRepository;
+import com.ueniweb.swiftwaresolutions.rowmapper.PrePatientRowMapper;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
@@ -15,6 +18,8 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
+
 public class PatientVisitReadPlatformServiceImpl implements PatientVisitReadPlatformService {
 
     private final PatientOpVisitRepositoryWrapper patientOpVisitRepositoryWrapper;
@@ -60,5 +65,14 @@ public class PatientVisitReadPlatformServiceImpl implements PatientVisitReadPlat
             throw new RuntimeException(e.getMessage());
         }
     }
+    @Override
+    public List<PrePatientData> fetchPrePatientDetialsByVstId(Long vstId) {
+        log.debug("START of fetchPrePatientDetialsByVstId()  vstId{} ", vstId);
+        final PrePatientRowMapper prePatientRowMapper = new PrePatientRowMapper();
 
+        String qry = "SELECT " + prePatientRowMapper.tableSchema() + " WHERE a.pat_id = b.`pat_id` AND d.id=b.pat_id AND c.`opvisit_id` = a.id AND a.id = "+vstId;
+        System.out.print("patientDetail"+qry);
+        log.debug("END of fetchPrePatientDetialsByVstId()");
+        return this.jdbcTemplate.query(qry, prePatientRowMapper);
+    }
 }

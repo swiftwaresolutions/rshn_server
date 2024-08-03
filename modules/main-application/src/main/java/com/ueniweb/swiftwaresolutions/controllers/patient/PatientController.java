@@ -1,13 +1,11 @@
 package com.ueniweb.swiftwaresolutions.controllers.patient;
 
-import com.ueniweb.swiftwaresolutions.core.services.Page;
-import com.ueniweb.swiftwaresolutions.data.*;
-import com.ueniweb.swiftwaresolutions.domain.Department;
-import com.ueniweb.swiftwaresolutions.domain.Ward;
-import com.ueniweb.swiftwaresolutions.service.DepartmentReadPlatformService;
+import com.ueniweb.swiftwaresolutions.data.PatientData;
+import com.ueniweb.swiftwaresolutions.data.PatientIpData;
+import com.ueniweb.swiftwaresolutions.data.PatientVisitData;
+import com.ueniweb.swiftwaresolutions.data.PrePatientData;
 import com.ueniweb.swiftwaresolutions.service.PatientReadPlatformService;
 import com.ueniweb.swiftwaresolutions.service.PatientVisitReadPlatformService;
-import com.ueniweb.swiftwaresolutions.service.WardReadPlatformService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
@@ -51,4 +49,9 @@ public class PatientController {
     public List<PatientVisitData> getPatientVisitDataByPatientDisplayNumber(@PathVariable(name = "patientDisplayNumber") String patientDisplayNumber) {
         return this.patientVisitReadPlatformService.fetchPatientVisitDetailsByPatientDisplayNumber(patientDisplayNumber);
     }
+    @GetMapping("/fetchPrePatientDetialsByVstId/{vstId}")
+    public List<PrePatientData> fetchPrePatientDetialsByVstId(@PathVariable(name = "vstId") Long vstId) {
+        return this.patientVisitReadPlatformService.fetchPrePatientDetialsByVstId(vstId);
+    }
+
 }
