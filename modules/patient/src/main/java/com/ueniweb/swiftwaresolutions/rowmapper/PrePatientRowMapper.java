@@ -12,10 +12,10 @@ public class PrePatientRowMapper  implements RowMapper<PrePatientData> {
 
     public PrePatientRowMapper(){
         final StringBuilder builder = new StringBuilder(200);
-        builder.append(" FROM `rec_patient_opvisits` a, ");
-        builder.append(" `rec_patient_details` b, ");
-        builder.append(" `ip_visit` c  ,");
-        builder.append("  `rec_patient` d");
+        builder.append(" FROM   `rec_patient` d,`rec_patient_details` b,`rec_patient_opvisits` a LEFT OUTER JOIN  `ip_visit` c  ON  c.`opvisit_id` = a.id  ");
+       // builder.append(" `rec_patient_details` b, ");
+        //builder.append(" `rec_patient_opvisits` a LEFT OUTER JOIN  `ip_visit` c  ON  c.`opvisit_id` = a.id");
+
 
         this.schema = builder.toString();
     }
@@ -27,7 +27,8 @@ public class PrePatientRowMapper  implements RowMapper<PrePatientData> {
 
     public String tableSchema() {
         final StringBuilder builder = new StringBuilder(200);
-        builder.append(" d.name AS NAME,TIMESTAMPDIFF( YEAR,b.`dob`,CURDATE()) AS dob,b.`sex` AS sex,IFNULL( c.`date`, '#') AS admDate,IFNULL( c.`discharged_date`, 'Not yet Discharged')AS dDate ,d.display_number");
+        builder.append(" d.name AS NAME,TIMESTAMPDIFF( YEAR,b.`dob`,CURDATE()) AS dob,b.`sex` AS sex,IFNULL( c.`date`, '#') AS admDate,\n" +
+                "IFNULL( c.`discharged_date`, 'Not yet Discharged')AS dDate ,d.display_number ");
         builder.append(this.schema);
         return builder.toString();
     }

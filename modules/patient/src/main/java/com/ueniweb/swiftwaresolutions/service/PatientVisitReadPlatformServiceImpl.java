@@ -70,7 +70,7 @@ public class PatientVisitReadPlatformServiceImpl implements PatientVisitReadPlat
         log.debug("START of fetchPrePatientDetialsByVstId()  vstId{} ", vstId);
         final PrePatientRowMapper prePatientRowMapper = new PrePatientRowMapper();
 
-        String qry = "SELECT " + prePatientRowMapper.tableSchema() + " WHERE a.pat_id = b.`pat_id` AND d.id=b.pat_id AND c.`opvisit_id` = a.id AND a.id = "+vstId;
+        String qry = "SELECT " + prePatientRowMapper.tableSchema() + "WHERE a.pat_id = b.`pat_id` AND d.id=b.pat_id AND a.id ="+vstId;
         System.out.print("patientDetail"+qry);
         log.debug("END of fetchPrePatientDetialsByVstId()");
         return this.jdbcTemplate.query(qry, prePatientRowMapper);
