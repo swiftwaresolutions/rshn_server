@@ -685,4 +685,56 @@ public class ClinicalInfoReadPlatformServiceImpl implements ClinicalInfoReadPlat
         }
         return dermatologyCaseSheetMap;
     }
+
+    @Override
+    public Map<String, Object> fetchOpthamologyCaseSheetByVstId(Long vstId) {
+        log.debug("START of fetchDermatologyCaseSheetByVstId() vstId{} ", vstId);
+        final OpthamologyCaseSheetRowMapper opthamologyCaseSheetRowMapper = new OpthamologyCaseSheetRowMapper();
+        String whereCondition = " WHERE cs.vstId = " + vstId;
+
+        String qry = " SELECT " + opthamologyCaseSheetRowMapper.schema() + whereCondition;
+
+        log.debug("END of fetchOpthamologyCaseSheetByVstId()");
+        final List<OpthamologyCaseSheetData> opthamologyCaseSheetDataList = this.jdbcTemplate.query(qry, opthamologyCaseSheetRowMapper);
+        for (OpthamologyCaseSheetData opthamologyCaseSheetData : opthamologyCaseSheetDataList) {
+            final List<ComplaintDetailsData> complaintDataList = fetchComplaintDetailsByVisitId(opthamologyCaseSheetData.getVstId(), 8);
+            opthamologyCaseSheetData.setComplaintDataList(complaintDataList);
+            final List<DiagnosisData> diagnosisDataList = fetchDiagnosisDetailsByVisitId(opthamologyCaseSheetData.getVstId(), 8);
+            opthamologyCaseSheetData.setDiagnosisDetailsData(diagnosisDataList);
+        }
+        Map<String, Object> opthamologyCaseSheetMap = new HashMap<>();
+        opthamologyCaseSheetMap.put("status", !opthamologyCaseSheetDataList.isEmpty());
+        if (opthamologyCaseSheetDataList.isEmpty()) {
+            opthamologyCaseSheetMap.put("message", "No Details Found");
+        } else {
+            opthamologyCaseSheetMap.put("data", opthamologyCaseSheetDataList);
+        }
+        return opthamologyCaseSheetMap;
+    }
+
+    @Override
+    public Map<String, Object> fetchENTCaseSheetByVstId(Long vstId) {
+        log.debug("START of fetchENTCaseSheetByVstId() vstId{} ", vstId);
+        final ENTCaseSheetRowMapper entCaseSheetRowMapper = new ENTCaseSheetRowMapper();
+        String whereCondition = " WHERE cs.vstId = " + vstId;
+
+        String qry = " SELECT " + entCaseSheetRowMapper.schema() + whereCondition;
+
+        log.debug("END of fetchENTCaseSheetByVstId()");
+        final List<ENTCaseSheetData> entCaseSheetDataList = this.jdbcTemplate.query(qry, entCaseSheetRowMapper);
+        for (ENTCaseSheetData entCaseSheetData : entCaseSheetDataList) {
+            final List<ComplaintDetailsData> complaintDataList = fetchComplaintDetailsByVisitId(entCaseSheetData.getVstId(), 9);
+            entCaseSheetData.setComplaintDataList(complaintDataList);
+            final List<DiagnosisData> diagnosisDataList = fetchDiagnosisDetailsByVisitId(entCaseSheetData.getVstId(), 9);
+            entCaseSheetData.setDiagnosisDetailsData(diagnosisDataList);
+        }
+        Map<String, Object> entCaseSheetMap = new HashMap<>();
+        entCaseSheetMap.put("status", !entCaseSheetDataList.isEmpty());
+        if (entCaseSheetDataList.isEmpty()) {
+            entCaseSheetMap.put("message", "No Details Found");
+        } else {
+            entCaseSheetMap.put("data", entCaseSheetDataList);
+        }
+        return entCaseSheetMap;
+    }
 }

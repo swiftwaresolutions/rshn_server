@@ -625,5 +625,55 @@ public class ClinicalInformationController {
         this.clinicalInfoWritePlatformService.updateDermatologyCaseSheet(id,createDermatologyCaseSheetRequest,caseSheetType);
     }
 
+    @PostMapping("/saveOpthamologyCaseSheet")
+    public Response saveOpthamologyCaseSheet(@RequestBody CreateOpthamologyCaseSheetRequest createOpthamologyCaseSheetRequest) {
+        final AppUser appUser = this.platformSecurityContext.authenticateUser();
+        if (appUser.getUser().getIsDoctor() != 1) {
+            throw new HimsApplicationContextException("Access Only For Doctors !");
+        }
+        return this.clinicalInfoWritePlatformService.saveOpthamologyCaseSheet(createOpthamologyCaseSheetRequest);
+    }
+
+    @GetMapping("/fetchOpthamologyCaseSheetByVstId/{vstId}")
+    public Map<String, Object> fetchOpthamologyCaseSheetByVstId(@PathVariable(name = "vstId") Long vstId) {
+        return this.clinicalInfoReadPlatformService.fetchOpthamologyCaseSheetByVstId(vstId);
+    }
+
+    @PutMapping("/updateOpthamologyCaseSheet/{id}/{caseSheetType}")
+    public void updateOpthamologyCaseSheet(@PathVariable(name = "id") Long id,
+                                           @PathVariable(name = "caseSheetType") Integer caseSheetType,
+                                           @RequestBody CreateOpthamologyCaseSheetRequest createOpthamologyCaseSheetRequest) {
+        final AppUser appUser = this.platformSecurityContext.authenticateUser();
+        if (appUser.getUser().getIsDoctor() != 1) {
+            throw new HimsApplicationContextException("Access Only For Doctors !");
+        }
+        this.clinicalInfoWritePlatformService.updateOpthamologyCaseSheet(id,createOpthamologyCaseSheetRequest,caseSheetType);
+    }
+
+    @PostMapping("/saveENTCaseSheet")
+    public Response saveENTCaseSheet(@RequestBody CreateENTCaseSheetRequest createENTCaseSheetRequest) {
+        final AppUser appUser = this.platformSecurityContext.authenticateUser();
+        if (appUser.getUser().getIsDoctor() != 1) {
+            throw new HimsApplicationContextException("Access Only For Doctors !");
+        }
+        return this.clinicalInfoWritePlatformService.saveENTCaseSheet(createENTCaseSheetRequest);
+    }
+
+    @GetMapping("/fetchENTCaseSheetByVstId/{vstId}")
+    public Map<String, Object> fetchENTCaseSheetByVstId(@PathVariable(name = "vstId") Long vstId) {
+        return this.clinicalInfoReadPlatformService.fetchENTCaseSheetByVstId(vstId);
+    }
+
+    @PutMapping("/updateENTCaseSheet/{id}/{caseSheetType}")
+    public void updateENTCaseSheet(@PathVariable(name = "id") Long id,
+                                   @PathVariable(name = "caseSheetType") Integer caseSheetType,
+                                   @RequestBody CreateENTCaseSheetRequest createENTCaseSheetRequest) {
+        final AppUser appUser = this.platformSecurityContext.authenticateUser();
+        if (appUser.getUser().getIsDoctor() != 1) {
+            throw new HimsApplicationContextException("Access Only For Doctors !");
+        }
+        this.clinicalInfoWritePlatformService.updateENTCaseSheet(id,createENTCaseSheetRequest,caseSheetType);
+    }
+
 }
 

@@ -102,5 +102,13 @@ public interface ClinicalInfoWritePlatformService {
 
     Response updateDermatologyCaseSheet(final Long id, final CreateDermatologyCaseSheetRequest createDermatologyCaseSheetRequest,final Integer caseSheetType);
 
+    Response saveOpthamologyCaseSheet(final CreateOpthamologyCaseSheetRequest createOpthamologyCaseSheetRequest);
+
+    Response updateOpthamologyCaseSheet(final Long id, final CreateOpthamologyCaseSheetRequest createOpthamologyCaseSheetRequest,final Integer caseSheetType);
+
+    Response saveENTCaseSheet(final CreateENTCaseSheetRequest createENTCaseSheetRequest);
+
+    Response updateENTCaseSheet(final Long id, final CreateENTCaseSheetRequest createENTCaseSheetRequest,final Integer caseSheetType);
+
 
 }

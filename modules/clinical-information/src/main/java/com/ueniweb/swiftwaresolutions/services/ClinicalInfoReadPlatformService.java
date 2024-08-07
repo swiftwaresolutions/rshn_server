@@ -91,5 +91,9 @@ public interface ClinicalInfoReadPlatformService {
 
     Map<String, Object> fetchDermatologyCaseSheetByVstId(Long vstId);
 
+    Map<String, Object> fetchOpthamologyCaseSheetByVstId(Long vstId);
+
+    Map<String, Object> fetchENTCaseSheetByVstId(Long vstId);
+
 }
 

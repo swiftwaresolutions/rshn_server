@@ -150,6 +150,22 @@ public class ClinicalInfoWritePlatformServiceImpl implements ClinicalInfoWritePl
 
     private final DermatologyDiagnosisDetailsRepository dermatologyDiagnosisDetailsRepository;
 
+    private final OpthamologyCaseSheetRepository opthamologyCaseSheetRepository;
+
+    private final OpthamologyCaseSheetRepositoryWrapper opthamologyCaseSheetRepositoryWrapper;
+
+    private final OpthamologyComplainDetailsRepository opthamologyComplainDetailsRepository;
+
+    private final OpthamologyDiagnosisDetailsRepository opthamologyDiagnosisDetailsRepository;
+
+    private final ENTCaseSheetRepository entCaseSheetRepository;
+
+    private final ENTCaseSheetRepositoryWrapper entCaseSheetRepositoryWrapper;
+
+    private final ENTComplainDetailsRepository entComplainDetailsRepository;
+
+    private final ENTDiagnosisDetailsRepository entDiagnosisDetailsRepository;
+
 
     @Transactional
     @Override
@@ -1043,4 +1059,121 @@ public class ClinicalInfoWritePlatformServiceImpl implements ClinicalInfoWritePl
             throw new RuntimeException(e);
         }
     }
+
+    @Transactional
+    @Override
+    public Response saveOpthamologyCaseSheet(final CreateOpthamologyCaseSheetRequest createOpthamologyCaseSheetRequest) {
+        try {
+            log.debug("START saveOpthamologyCaseSheet request {}", createOpthamologyCaseSheetRequest);
+            this.caseSheetValidator.validateComplaintData(createOpthamologyCaseSheetRequest.getCreateComplaintDetailsRequestList());
+            //this.caseSheetValidator.DermatologyCaseSheetDate(createDermatologyCaseSheetRequest);
+            if (createOpthamologyCaseSheetRequest.getVisitId()==0 || createOpthamologyCaseSheetRequest.getPatientId() ==0) {
+                throw new NullPointerException("Choose Proper Patient!");
+            }
+
+            final OpthamologyCaseSheet newOpthamologyCaseSheet = OpthamologyCaseSheet.to(createOpthamologyCaseSheetRequest);
+            newOpthamologyCaseSheet.setOpthamologyComplaintDetailsList(OpthamologyComplaintDetails.to(newOpthamologyCaseSheet,createOpthamologyCaseSheetRequest.getCreateComplaintDetailsRequestList()));
+            newOpthamologyCaseSheet.setOpthamologyDiagnosisDetailsList(OpthamologyDiagnosisDetails.to(newOpthamologyCaseSheet,createOpthamologyCaseSheetRequest.getCreateDiagnosisDetailsRequestList()));
+            opthamologyCaseSheetRepository.saveAndFlush(newOpthamologyCaseSheet);
+            log.debug("END saveDermatologyCaseSheet id ");
+            return new Response(newOpthamologyCaseSheet.getId());
+        } catch (Exception e) {
+            log.error("Caught with exception while saving GeneralCaseSheet {}", e.getMessage());
+            throw new RuntimeException(e);
+
+        }
+
+    }
+
+    @Transactional
+    @Override
+    public Response updateOpthamologyCaseSheet(Long id, CreateOpthamologyCaseSheetRequest createOpthamologyCaseSheetRequest,Integer caseSheetType) {
+        try {
+            log.debug("START of updateOpthamologyCaseSheet() id {} request {} caseSheetType{}", id, createOpthamologyCaseSheetRequest,caseSheetType);
+            final OpthamologyCaseSheet opthamologyCaseSheet = this.opthamologyCaseSheetRepositoryWrapper.findOneWithNotFoundDetection(id);
+            opthamologyCaseSheet.update(createOpthamologyCaseSheetRequest);
+            this.opthamologyCaseSheetRepository.saveAndFlush(opthamologyCaseSheet);
+
+            final List<OpthamologyComplaintDetails> complaintDetailsList = this.opthamologyComplainDetailsRepository.fetchOpthamologyComplaintDetailsBycaseSheetId(opthamologyCaseSheet.getId(),caseSheetType);
+            for (OpthamologyComplaintDetails opthamologyComplaintDetails : complaintDetailsList) {
+                opthamologyComplaintDetails.setIsValid(0L);
+                opthamologyComplainDetailsRepository.save(opthamologyComplaintDetails);
+            }
+
+
+            final List<OpthamologyDiagnosisDetails> opthamologyDiagnosisDetailsList = this.opthamologyDiagnosisDetailsRepository.fetchOpthamologyDiagnosisDetailsBycaseSheetId(opthamologyCaseSheet.getId());
+            for (OpthamologyDiagnosisDetails opthamologyDiagnosisDetails : opthamologyDiagnosisDetailsList) {
+                opthamologyDiagnosisDetails.setIsValid(0L);
+                opthamologyDiagnosisDetailsRepository.save(opthamologyDiagnosisDetails);
+            }
+
+            opthamologyCaseSheet.setOpthamologyComplaintDetailsList(OpthamologyComplaintDetails.to(opthamologyCaseSheet,createOpthamologyCaseSheetRequest.getCreateComplaintDetailsRequestList()));
+            opthamologyCaseSheet.setOpthamologyDiagnosisDetailsList(OpthamologyDiagnosisDetails.to(opthamologyCaseSheet, createOpthamologyCaseSheetRequest.getCreateDiagnosisDetailsRequestList()));
+            opthamologyCaseSheetRepository.saveAndFlush(opthamologyCaseSheet);
+
+            log.debug("END of updateOpthamologyCaseSheet() id {} request {}", id, createOpthamologyCaseSheetRequest);
+            return new Response(opthamologyCaseSheet.getId());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Transactional
+    @Override
+    public Response saveENTCaseSheet(final CreateENTCaseSheetRequest createENTCaseSheetRequest) {
+        try {
+            log.debug("START saveENTCaseSheet request {}", createENTCaseSheetRequest);
+            this.caseSheetValidator.validateComplaintData(createENTCaseSheetRequest.getCreateComplaintDetailsRequestList());
+            //this.caseSheetValidator.DermatologyCaseSheetDate(createDermatologyCaseSheetRequest);
+            if (createENTCaseSheetRequest.getVisitId()==0 || createENTCaseSheetRequest.getPatientId() ==0) {
+                throw new NullPointerException("Choose Proper Patient!");
+            }
+
+            final ENTCaseSheet newENTCaseSheet = ENTCaseSheet.to(createENTCaseSheetRequest);
+            newENTCaseSheet.setEntComplaintDetailsList(ENTComplaintDetails.to(newENTCaseSheet,createENTCaseSheetRequest.getCreateComplaintDetailsRequestList()));
+            newENTCaseSheet.setEntDiagnosisDetailsList(ENTDiagnosisDetails.to(newENTCaseSheet,createENTCaseSheetRequest.getCreateDiagnosisDetailsRequestList()));
+            entCaseSheetRepository.saveAndFlush(newENTCaseSheet);
+            log.debug("END saveENTCaseSheet id ");
+            return new Response(newENTCaseSheet.getId());
+        } catch (Exception e) {
+            log.error("Caught with exception while saving GeneralCaseSheet {}", e.getMessage());
+            throw new RuntimeException(e);
+
+        }
+
+    }
+
+    @Transactional
+    @Override
+    public Response updateENTCaseSheet(Long id, CreateENTCaseSheetRequest createENTCaseSheetRequest,Integer caseSheetType) {
+        try {
+            log.debug("START of updateENTCaseSheet() id {} request {} caseSheetType{}", id, createENTCaseSheetRequest,caseSheetType);
+            final ENTCaseSheet entCaseSheet = this.entCaseSheetRepositoryWrapper.findOneWithNotFoundDetection(id);
+            entCaseSheet.update(createENTCaseSheetRequest);
+            this.entCaseSheetRepository.saveAndFlush(entCaseSheet);
+
+            final List<ENTComplaintDetails> complaintDetailsList = this.entComplainDetailsRepository.fetchENTComplaintDetailsBycaseSheetId(entCaseSheet.getId(),caseSheetType);
+            for (ENTComplaintDetails entComplaintDetails : complaintDetailsList) {
+                entComplaintDetails.setIsValid(0L);
+                entComplainDetailsRepository.save(entComplaintDetails);
+            }
+
+
+            final List<ENTDiagnosisDetails> entDiagnosisDetailsList = this.entDiagnosisDetailsRepository.fetchENTDiagnosisDetailsBycaseSheetId(entCaseSheet.getId());
+            for (ENTDiagnosisDetails entDiagnosisDetails : entDiagnosisDetailsList) {
+                entDiagnosisDetails.setIsValid(0L);
+                entDiagnosisDetailsRepository.save(entDiagnosisDetails);
+            }
+
+            entCaseSheet.setEntComplaintDetailsList(ENTComplaintDetails.to(entCaseSheet,createENTCaseSheetRequest.getCreateComplaintDetailsRequestList()));
+            entCaseSheet.setEntDiagnosisDetailsList(ENTDiagnosisDetails.to(entCaseSheet, createENTCaseSheetRequest.getCreateDiagnosisDetailsRequestList()));
+            entCaseSheetRepository.saveAndFlush(entCaseSheet);
+
+            log.debug("END of updateDermatologyCaseSheet() id {} request {}", id, createENTCaseSheetRequest);
+            return new Response(entCaseSheet.getId());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
 }
