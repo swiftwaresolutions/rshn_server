@@ -204,6 +204,7 @@ public class ClinicalInfoWritePlatformServiceImpl implements ClinicalInfoWritePl
             prescription.setPhDescriptionDetailsList(PrescriptionDetails.to(prescription,createPrescriptionRequest.getCreatePrescriptionDetailsRequestList()));
             final Prescription newPrescription = prescriptionRepository.saveAndFlush(prescription);
             log.debug("END savePrescription id ");
+            System.out.print("vada"+newPrescription.getId());
             return this.clinicalInfoReadPlatformService.fetchPrescriptionDetailsById(newPrescription.getId());
         } catch (Exception e) {
             log.error("Caught with exception while saving savePrescription {}", e.getMessage());

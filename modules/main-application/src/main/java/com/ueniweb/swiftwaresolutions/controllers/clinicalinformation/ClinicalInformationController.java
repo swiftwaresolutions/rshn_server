@@ -84,6 +84,8 @@ public class ClinicalInformationController {
         if (appUser.getUser().getIsDoctor() != 1) {
             throw new HimsApplicationContextException("Access Only For Doctors !");
         }
+        System.out.print(prescriptionRequest);
+        System.out.print(id);
         return this.clinicalInfoWritePlatformService.updatePrescription(id,prescriptionRequest);
     }
 

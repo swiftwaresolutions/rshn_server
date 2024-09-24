@@ -233,6 +233,7 @@ public class ClinicalInfoReadPlatformServiceImpl implements ClinicalInfoReadPlat
             whereCond = " WHERE prd.is_cancelled=0 and  pr.id ='" + id + "' ";
         }
         String qry = "SELECT " + prescriptionRowMapper.tableSchema() + whereCond;
+        System.out.print("vada"+qry);
 
         log.debug("END of fetchPrescriptionDetailsById() id {} ", id);
         return this.jdbcTemplate.query(qry, prescriptionRowMapper);
