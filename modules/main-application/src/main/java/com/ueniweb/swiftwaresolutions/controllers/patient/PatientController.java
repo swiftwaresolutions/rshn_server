@@ -1,9 +1,6 @@
 package com.ueniweb.swiftwaresolutions.controllers.patient;
 
-import com.ueniweb.swiftwaresolutions.data.PatientData;
-import com.ueniweb.swiftwaresolutions.data.PatientIpData;
-import com.ueniweb.swiftwaresolutions.data.PatientVisitData;
-import com.ueniweb.swiftwaresolutions.data.PrePatientData;
+import com.ueniweb.swiftwaresolutions.data.*;
 import com.ueniweb.swiftwaresolutions.service.PatientReadPlatformService;
 import com.ueniweb.swiftwaresolutions.service.PatientVisitReadPlatformService;
 import lombok.RequiredArgsConstructor;
@@ -52,6 +49,11 @@ public class PatientController {
     @GetMapping("/fetchPrePatientDetialsByVstId/{vstId}")
     public List<PrePatientData> fetchPrePatientDetialsByVstId(@PathVariable(name = "vstId") Long vstId) {
         return this.patientVisitReadPlatformService.fetchPrePatientDetialsByVstId(vstId);
+    }
+    @GetMapping("/fetchIpVisitsByDisplayNo/{displayNumber}")
+    public List<IpPatientData> fetchIpVisitsByDisplayNo(@PathVariable(name = "displayNumber") String display) {
+System.out.print("display"+display);
+        return this.patientVisitReadPlatformService.fetchIpVisitsByDisplayNo(display);
     }
 
 }
