@@ -55,5 +55,9 @@ public class PatientController {
 System.out.print("display"+display);
         return this.patientVisitReadPlatformService.fetchIpVisitsByDisplayNo(display);
     }
+    @GetMapping("fetchPatientPrevVisitByPatientDisplayNumber/{displayNumber}")
+    public List<PatientData>fetchPatientPrevVisitByPatientDisplayNumber(@PathVariable(name = "displayNumber") String displayNumber) {
+        return this.patientVisitReadPlatformService.fetchPatientPrevVisitByPatientDisplayNumber(displayNumber);
+    }
 
 }

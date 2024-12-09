@@ -1,6 +1,7 @@
 package com.ueniweb.swiftwaresolutions.service;
 
 import com.ueniweb.swiftwaresolutions.data.IpPatientData;
+import com.ueniweb.swiftwaresolutions.data.PatientData;
 import com.ueniweb.swiftwaresolutions.data.PatientVisitData;
 import com.ueniweb.swiftwaresolutions.data.PrePatientData;
 import com.ueniweb.swiftwaresolutions.domain.*;
@@ -11,6 +12,7 @@ import com.ueniweb.swiftwaresolutions.repository.PatientRepository;
 import com.ueniweb.swiftwaresolutions.rowmapper.IpPatientRowMapper;
 import com.ueniweb.swiftwaresolutions.rowmapper.IpPatientsRowMapper;
 import com.ueniweb.swiftwaresolutions.rowmapper.PrePatientRowMapper;
+import com.ueniweb.swiftwaresolutions.rowmapper.PrevVisitPatientRowMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -86,5 +88,16 @@ public class PatientVisitReadPlatformServiceImpl implements PatientVisitReadPlat
         System.out.print("fetchIpVisitsByDisplayNo"+qry);
         log.debug("END of fetchIpVisitsByDisplayNo()");
         return this.jdbcTemplate.query(qry, ipPatientRowMapper);
+    }
+    public List<PatientData> fetchPatientPrevVisitByPatientDisplayNumber(String displayNumber) {
+        try{
+            final PrevVisitPatientRowMapper prevVisitPatientRowMapper = new PrevVisitPatientRowMapper();
+            String whereCondition = " where a.id = b.`pat_id` AND a.`is_in_ip` = 0 AND a.`is_blocked` = 0 AND a.`loc_id` =1 AND b.date != CURRENT_DATE \n" +
+                                    "AND a.`display_number` = "+displayNumber + " ORDER BY b.id DESC  \n";
+            String qry = "\n SELECT " + prevVisitPatientRowMapper.schema() + whereCondition;
+            return this.jdbcTemplate.query(qry,prevVisitPatientRowMapper);
+        } catch (Exception e) {
+            throw new RuntimeException(e.getMessage());
+        }
     }
 }
