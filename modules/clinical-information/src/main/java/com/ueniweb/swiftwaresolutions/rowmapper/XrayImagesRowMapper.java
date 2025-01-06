@@ -61,9 +61,9 @@ public class XrayImagesRowMapper implements RowMapper<PatientUploadImageData> {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        File file = new File(configProp.getProperty("xrayImage.folder")+imagePath);
+        File file = new File(configProp.getProperty("xrayImage.folder")+"\\"+imagePath);
         final Boolean imageExist = file.isFile();
-        return PatientUploadImageData.createNewInstance(id,patientId,visitId,imagePath,date,imageExist);
+        return PatientUploadImageData.createNewInstance(id,patientId,visitId,"/api/v1/fetchPatientImage/"+imagePath,date,imageExist);
     }
 }
 
