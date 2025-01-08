@@ -500,7 +500,7 @@ public class ClinicalInformationController {
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-Type", "application/octet-stream");
         try {
-            File file = new File(xrayImageFolderLocation+imageName);
+            File file = new File(xrayImageFolderLocation+"\\"+imageName).getAbsoluteFile();
             if (file.isFile()) {
                 byte[]  fileContent = Files.readAllBytes(file.toPath());
                 return ResponseEntity.ok()
