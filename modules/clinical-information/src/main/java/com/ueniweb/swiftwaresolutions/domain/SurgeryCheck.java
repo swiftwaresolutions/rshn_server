@@ -128,6 +128,42 @@ public class SurgeryCheck {
     @Basic(optional = false)
     private Long docId;
 
+    @Column(name = "oximeterIn")
+    @Basic(optional = false)
+    private String oximeterIn;
+
+    @Column(name = "medicationIn")
+    @Basic(optional = false)
+    private String medicationIn;
+
+    @Column(name = "prophylaxisIn")
+    @Basic(optional = false)
+    private String prophylaxisIn;
+
+    @Column(name = "timeTakenIn")
+    @Basic(optional = false)
+    private String timeTakenIn;
+
+    @Column(name = "anticipatedBloodIn")
+    @Basic(optional = false)
+    private String anticipatedBloodIn;
+
+    @Column(name = "patientSpecificIn")
+    @Basic(optional = false)
+    private String patientSpecificIn;
+
+    @Column(name = "proceduresIn")
+    @Basic(optional = false)
+    private String proceduresIn;
+
+    @Column(name = "recoveryIn")
+    @Basic(optional = false)
+    private String recoveryIn;
+
+    @Column(name = "docName")
+    @Basic(optional = false)
+    private String docName;
+
     public static SurgeryCheck to(final CreateSurgeryChecklistReuest createSurgeryChecklistReuest){
 
         SurgeryCheck surgeryCheck = new SurgeryCheck();
@@ -159,6 +195,16 @@ public class SurgeryCheck {
         surgeryCheck.setDtm(DateTimeUtils.convertLocalDateToDateTimeFormat(LocalDateTime.now()));
         surgeryCheck.setSurgName(createSurgeryChecklistReuest.getSurgName());
         surgeryCheck.setDocId(createSurgeryChecklistReuest.getDocId());
+        surgeryCheck.setOximeterIn(createSurgeryChecklistReuest.getOximeterIn());
+        surgeryCheck.setMedicationIn(createSurgeryChecklistReuest.getMedicationIn());
+        surgeryCheck.setProphylaxisIn(createSurgeryChecklistReuest.getProphylaxisIn());
+        surgeryCheck.setTimeTakenIn(createSurgeryChecklistReuest.getTimeTakenIn());
+        surgeryCheck.setAnticipatedBloodIn(createSurgeryChecklistReuest.getAnticipatedBloodIn());
+        surgeryCheck.setPatientSpecificIn(createSurgeryChecklistReuest.getPatientSpecificIn());
+        surgeryCheck.setProceduresIn(createSurgeryChecklistReuest.getProceduresIn());
+        surgeryCheck.setRecoveryIn(createSurgeryChecklistReuest.getRecoveryIn());
+        surgeryCheck.setDocName(createSurgeryChecklistReuest.getDocName());
+
 
 
         return surgeryCheck;
@@ -193,6 +239,15 @@ public class SurgeryCheck {
         this.setDtm(DateTimeUtils.convertLocalDateToDateTimeFormat(LocalDateTime.now()));
         this.setSurgName(createSurgeryChecklistReuest.getSurgName());
         this.setDocId(createSurgeryChecklistReuest.getDocId());
+        this.setOximeterIn(createSurgeryChecklistReuest.getOximeterIn());
+        this.setMedicationIn(createSurgeryChecklistReuest.getMedicationIn());
+        this.setProphylaxisIn(createSurgeryChecklistReuest.getProphylaxisIn());
+        this.setTimeTakenIn(createSurgeryChecklistReuest.getTimeTakenIn());
+        this.setAnticipatedBloodIn(createSurgeryChecklistReuest.getAnticipatedBloodIn());
+        this.setPatientSpecificIn(createSurgeryChecklistReuest.getPatientSpecificIn());
+        this.setProceduresIn(createSurgeryChecklistReuest.getProceduresIn());
+        this.setRecoveryIn(createSurgeryChecklistReuest.getRecoveryIn());
+        this.setDocName(createSurgeryChecklistReuest.getDocName());
     }
 
 

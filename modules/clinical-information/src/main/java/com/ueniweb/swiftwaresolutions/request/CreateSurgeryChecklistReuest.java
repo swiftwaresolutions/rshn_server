@@ -64,6 +64,23 @@ public class CreateSurgeryChecklistReuest {
 
     private Long docId;
 
+    private String oximeterIn;
+
+    private String medicationIn;
+
+    private String prophylaxisIn;
+
+    private String timeTakenIn;
+
+    private String anticipatedBloodIn;
+
+    private String patientSpecificIn;
+
+    private String proceduresIn;
+
+    private String recoveryIn;
+
+    private String docName;
 
     @Override
     public String toString() {
@@ -94,10 +111,24 @@ public class CreateSurgeryChecklistReuest {
                 ", sterility=" + sterility +
                 ", teamMembers=" + teamMembers +
                 ", timeTaken=" + timeTaken +
-                ", dtm=" + dtm +
-                ", surgName=" + surgName +
+                ", dtm='" + dtm + '\'' +
+                ", surgName='" + surgName + '\'' +
                 ", docId=" + docId +
+                ", oximeterIn='" + oximeterIn + '\'' +
+                ", medicationIn='" + medicationIn + '\'' +
+                ", prophylaxisIn='" + prophylaxisIn + '\'' +
+                ", timeTakenIn='" + timeTakenIn + '\'' +
+                ", anticipatedBloodIn='" + anticipatedBloodIn + '\'' +
+                ", patientSpecificIn='" + patientSpecificIn + '\'' +
+                ", proceduresIn='" + proceduresIn + '\'' +
+                ", recoveryIn='" + recoveryIn + '\'' +
+                ", docName='" + docName + '\'' +
+
                 '}';
     }
+
+
+
+
 
 }

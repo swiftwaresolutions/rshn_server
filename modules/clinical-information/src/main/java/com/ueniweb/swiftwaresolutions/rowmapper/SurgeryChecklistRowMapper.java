@@ -19,7 +19,8 @@ public class SurgeryChecklistRowMapper implements RowMapper<SurgeryCheckListData
 
     public String tableSchema() {
         final StringBuilder builder = new StringBuilder(200);
-        builder.append("a.id,a.patId,a.visitId,a.ipId,a.airway,a.allergy,a.anticipatedBlood,a.bloodloss,a.confermation,a.critical,a.equipmentIssues,a.equipmentProblems,a.imaging,a.incision,a.marked,a.medication,a.oximeter,a.patientSpecific,a.procedures,a.prophylaxis,a.recovery,a.specimen,a.sponge,a.sterility,a.teamMembers,a.timeTaken,a.dtm,a.surgName,a.docId");
+        builder.append("a.id,a.patId,a.visitId,a.ipId,a.airway,a.allergy,a.anticipatedBlood,a.bloodloss,a.confermation,a.critical,a.equipmentIssues,a.equipmentProblems,a.imaging,a.incision,a.marked,a.medication,a.oximeter,a.patientSpecific,a.procedures,a.prophylaxis,a.recovery,a.specimen,a.sponge,a.sterility,a.teamMembers,a.timeTaken,a.dtm,a.surgName,a.docId,a.oximeterIn,a.medicationIn, a.prophylaxisIn, a.timeTakenIn, a.anticipatedBloodIn,a.patientSpecificIn, a.proceduresIn, a.recoveryIn,a.docName"
+                 );
         builder.append(this.schema);
         return builder.toString();
     }
@@ -55,12 +56,21 @@ public class SurgeryChecklistRowMapper implements RowMapper<SurgeryCheckListData
         final String dtm = rs.getString("dtm");
         final String surgName=rs.getString("surgName");
         final Long docId=rs.getLong("docId");
+        final String oximeterIn=rs.getString("oximeterIn");
+        final String medicationIn=rs.getString("medicationIn");
+        final String prophylaxisIn=rs.getString("prophylaxisIn");
+        final String timeTakenIn=rs.getString("timeTakenIn");
+        final String anticipatedBloodIn=rs.getString("anticipatedBloodIn");
+        final String patientSpecificIn=rs.getString("patientSpecificIn");
+        final String proceduresIn=rs.getString("proceduresIn");
+        final String recoveryIn=rs.getString("recoveryIn");
+        final String docName=rs.getString("docName");
 
 
-        return SurgeryCheckListData.createNewInstance(id, patId, visitId, ipId, airway, allergy,
-                anticipatedBlood, bloodloss, confermation, critical, equipmentIssues, equipmentProblems,
-                imaging, incision, marked, medication, oximeter, patientSpecific, procedures, prophylaxis,
-                recovery, specimen, sponge, sterility, teamMembers, timeTaken, dtm,surgName,docId);
+
+        return SurgeryCheckListData.createNewInstance(id,     patId,     visitId,     ipId,     airway,     allergy,     anticipatedBlood,     bloodloss,     confermation,     critical,     equipmentIssues,     equipmentProblems,     imaging,     incision,     marked,     medication,     oximeter,     patientSpecific,     procedures,     prophylaxis,     recovery,     specimen,     sponge,     sterility,     teamMembers,     timeTaken,     dtm,surgName,docId,oximeterIn,
+                medicationIn, prophylaxisIn, timeTakenIn, anticipatedBloodIn,
+                patientSpecificIn, proceduresIn, recoveryIn ,docName);
     }
 
 }
