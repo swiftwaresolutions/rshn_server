@@ -637,7 +637,7 @@ public class ClinicalInfoReadPlatformServiceImpl implements ClinicalInfoReadPlat
         final SurgeryChecklistRowMapper surgeryChecklistRowMapper = new SurgeryChecklistRowMapper();
 
         String qry = "SELECT " + surgeryChecklistRowMapper.tableSchema() + " WHERE visitId = " + vstId;
-
+        System.out.println("qry is " + qry);
         log.debug("END of fetchSurgeryChecklistByVatId()");
         return this.jdbcTemplate.query(qry, surgeryChecklistRowMapper);
     }
