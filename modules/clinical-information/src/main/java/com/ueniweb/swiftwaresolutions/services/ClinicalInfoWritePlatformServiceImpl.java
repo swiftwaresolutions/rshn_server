@@ -22,6 +22,7 @@ import java.sql.Time;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
+import java.util.Optional;
 
 import static org.springframework.data.jpa.domain.AbstractPersistable_.id;
 
@@ -133,6 +134,8 @@ public class ClinicalInfoWritePlatformServiceImpl implements ClinicalInfoWritePl
     private final SurgeryChecklistRepository surgeryChecklistRepository;
 
     private final SurgeryChecklistRepositoryWrapper surgeryChecklistRepositoryWrapper;
+
+    private final NursingCheckListRepository nursingCheckListRepository;
 
     private final IpProcedureCaseSheetRepository ipProcedureCaseSheetRepository;
 
@@ -915,9 +918,8 @@ public class ClinicalInfoWritePlatformServiceImpl implements ClinicalInfoWritePl
             log.error("Caught with exception while saveSurgeryChecklist {}", e.getMessage());
             throw new RuntimeException(e.getMessage());
         }
-
-
     }
+
     @Transactional
     @Override
     public Response updateSurgeryChecklist(Long id, CreateSurgeryChecklistReuest createSurgeryChecklistReuest) {
@@ -1177,4 +1179,27 @@ public class ClinicalInfoWritePlatformServiceImpl implements ClinicalInfoWritePl
         }
     }
 
+    @Override
+    public Response saveNursingCheckList(NursingCheckListReq nursingCheckListReq, long userId) {
+        try {
+            if (nursingCheckListReq.getPatId() == null || nursingCheckListReq.getVisitId() == null) {
+                throw new IllegalArgumentException("Patient ID and Visit ID are required");
+            }
+            Optional<NursingCheckList> existingRecord = this.nursingCheckListRepository.findByVisitId(nursingCheckListReq.getVisitId());
+            NursingCheckList savedEntity;
+
+            if (existingRecord.isPresent()) {
+                NursingCheckList nursingCheckList = existingRecord.get();
+                nursingCheckList.update(nursingCheckListReq, userId);
+                savedEntity = this.nursingCheckListRepository.save(nursingCheckList);
+            } else {
+                final NursingCheckList nursingCheckList = NursingCheckList.save(nursingCheckListReq, userId);
+                savedEntity = this.nursingCheckListRepository.save(nursingCheckList);
+            }
+            return new Response(savedEntity.getId());
+
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to save nursing checklist: " + e.getMessage());
+        }
+    }
 }

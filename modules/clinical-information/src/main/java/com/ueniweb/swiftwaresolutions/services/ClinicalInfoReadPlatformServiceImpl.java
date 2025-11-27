@@ -2,6 +2,8 @@ package com.ueniweb.swiftwaresolutions.services;
 
 import com.ueniweb.swiftwaresolutions.core.services.PaginationHelper;
 import com.ueniweb.swiftwaresolutions.data.*;
+import com.ueniweb.swiftwaresolutions.domain.NursingCheckList;
+import com.ueniweb.swiftwaresolutions.repository.NursingCheckListRepository;
 import com.ueniweb.swiftwaresolutions.repository.PrescriptionRepository;
 import com.ueniweb.swiftwaresolutions.rowmapper.*;
 import lombok.RequiredArgsConstructor;
@@ -12,6 +14,7 @@ import org.springframework.stereotype.Service;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 
 @Service
@@ -23,6 +26,7 @@ public class ClinicalInfoReadPlatformServiceImpl implements ClinicalInfoReadPlat
 
     private final PrescriptionRepository prescriptionRepository;
     private final PaginationHelper<PrescriptionData> prescriptionDataPaginationHelper = new PaginationHelper<>();
+    private final NursingCheckListRepository nursingCheckListRepository;
 
 
     @Override
@@ -737,5 +741,19 @@ public class ClinicalInfoReadPlatformServiceImpl implements ClinicalInfoReadPlat
             entCaseSheetMap.put("data", entCaseSheetDataList);
         }
         return entCaseSheetMap;
+    }
+
+    public NursingCheckList getNursingCheckListByVisitId(Integer visitId) {
+        try {
+            Optional<NursingCheckList> nursingCheckList = this.nursingCheckListRepository.findByVisitId(visitId);
+
+            if (nursingCheckList.isPresent()) {
+                return nursingCheckList.get();
+            } else {
+                return null;
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to fetch nursing checklist: " + e.getMessage());
+        }
     }
 }

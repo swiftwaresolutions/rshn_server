@@ -90,6 +90,8 @@ public interface ClinicalInfoWritePlatformService {
 
     Response updateSurgeryChecklist(final Long id, final CreateSurgeryChecklistReuest createSurgeryChecklistReuest);
 
+    Response saveNursingCheckList(final NursingCheckListReq nursingCheckListReq,long userId);
+
     Response saveIpProcedureCaseSheet(final CreateIpProcedureCaseSheetRequest createIpProcedureCaseSheetRequest);
 
     Response updateIpProcedureCaseSheet(final Long id, final CreateIpProcedureCaseSheetRequest createIpProcedureCaseSheetRequest);

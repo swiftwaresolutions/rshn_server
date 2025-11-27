@@ -4,6 +4,7 @@ package com.ueniweb.swiftwaresolutions.controllers.clinicalinformation;
 import com.ueniweb.swiftwaresolutions.core.exception.HimsApplicationContextException;
 import com.ueniweb.swiftwaresolutions.core.response.Response;
 import com.ueniweb.swiftwaresolutions.data.*;
+import com.ueniweb.swiftwaresolutions.domain.NursingCheckList;
 import com.ueniweb.swiftwaresolutions.request.*;
 import com.ueniweb.swiftwaresolutions.security.PlatformSecurityContext;
 
@@ -565,6 +566,7 @@ public class ClinicalInformationController {
         this.clinicalInfoWritePlatformService.updateSurgeryChecklist(id,createSurgeryChecklistReuest);
     }
 
+
     @PostMapping("/saveIpProcedureCaseSheet")
     public Response saveIpProcedureCaseSheet (@RequestBody CreateIpProcedureCaseSheetRequest createIpProcedureCaseSheetRequest){
         final AppUser appUser = this.platformSecurityContext.authenticateUser();
@@ -675,6 +677,27 @@ public class ClinicalInformationController {
             throw new HimsApplicationContextException("Access Only For Doctors !");
         }
         this.clinicalInfoWritePlatformService.updateENTCaseSheet(id,createENTCaseSheetRequest,caseSheetType);
+    }
+
+
+    @PostMapping("/saveOrUpdateNursingCheckList")
+    public Response saveOrUpdateNursingCheckList(@RequestBody NursingCheckListReq nursingCheckListReq) {
+        final AppUser appUser = this.platformSecurityContext.authenticateUser();
+        Long userId = appUser.getUser().getId();
+        return this.clinicalInfoWritePlatformService.saveNursingCheckList(nursingCheckListReq, userId);
+    }
+    @GetMapping("/fetchNursingCheckListByVisitId/{visitId}")
+    public ResponseEntity<?> getNursingCheckListByVisitId(@PathVariable Integer visitId) {
+        try {
+            NursingCheckList nursingCheckList = this.clinicalInfoReadPlatformService.getNursingCheckListByVisitId(visitId);
+            if (nursingCheckList != null) {
+                return ResponseEntity.ok(nursingCheckList);
+            } else {
+                return ResponseEntity.notFound().build();
+            }
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Error fetching nursing checklist: " + e.getMessage());
+        }
     }
 
 }
