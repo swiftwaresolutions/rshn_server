@@ -111,6 +111,11 @@ public interface ClinicalInfoWritePlatformService {
     Response saveENTCaseSheet(final CreateENTCaseSheetRequest createENTCaseSheetRequest);
 
     Response updateENTCaseSheet(final Long id, final CreateENTCaseSheetRequest createENTCaseSheetRequest,final Integer caseSheetType);
+    
+    Response saveNursingAdmissionChart(final CreateNursingAdmissionChartRequest createNursingAdmissionChartRequest, final Long UserId);
+    
+    Response updateNursingAdmissionChart(final Long id, final CreateNursingAdmissionChartRequest createNursingAdmissionChartRequest, final Long userId);
+
 
 
 }

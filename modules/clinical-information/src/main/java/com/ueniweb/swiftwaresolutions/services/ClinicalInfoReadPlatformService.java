@@ -29,6 +29,8 @@ public interface ClinicalInfoReadPlatformService {
     List<DurationData> fetchDurationDetails();
 
     List<ConsultantData> fetchConsultant(String consultantName);
+    
+    ConsultantData fetchConsultantById(Long id);
 
     List<UnitData> fetchUnitDetails();
 
@@ -97,5 +99,7 @@ public interface ClinicalInfoReadPlatformService {
     Map<String, Object> fetchENTCaseSheetByVstId(Long vstId);
 
     NursingCheckList getNursingCheckListByVisitId(Integer visitId);
+
+    NursingAdmissionChartData fetchNursingAdmissionChartByVstId(Long vstId);
 }
 

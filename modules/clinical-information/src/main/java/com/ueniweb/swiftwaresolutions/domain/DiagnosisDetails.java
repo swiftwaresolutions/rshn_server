@@ -65,4 +65,5 @@ public class DiagnosisDetails {
 
         return diagnosisDetails;
     }
+
 }

@@ -19,10 +19,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Date;
 import java.sql.Time;
+import java.time.LocalDateTime;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
+
 
 import static org.springframework.data.jpa.domain.AbstractPersistable_.id;
 
@@ -130,6 +132,12 @@ public class ClinicalInfoWritePlatformServiceImpl implements ClinicalInfoWritePl
     private final NursingIoRepository nursingIoRepository;
 
     private final NursingIoRepositoryWrapper nursingIoRepositoryWrapper;
+
+    private final NursingAdmissionChartRepository nursingAdmissionChartRepository;
+    
+    private final NursingDiagnosisDetailsRepository nursingDiagnosisDetailsRepository;
+
+
 
     private final SurgeryChecklistRepository surgeryChecklistRepository;
 
@@ -1202,4 +1210,83 @@ public class ClinicalInfoWritePlatformServiceImpl implements ClinicalInfoWritePl
             throw new RuntimeException("Failed to save nursing checklist: " + e.getMessage());
         }
     }
+
+    @Override
+    @Transactional
+    public Response saveNursingAdmissionChart(final CreateNursingAdmissionChartRequest createNursingAdmissionChartRequest, final Long userId) {
+        try {
+            log.debug("START saveNursingAdmissionChart request {}", createNursingAdmissionChartRequest);
+            final NursingAdmissionChart newNursingAdmissionChart = NursingAdmissionChart.to(createNursingAdmissionChartRequest,userId);
+            this.nursingAdmissionChartRepository.saveAndFlush(newNursingAdmissionChart);
+
+            final List<CreateDiagnosisDetailsRequest> diagList = createNursingAdmissionChartRequest.getCreateDiagnosisDetailsRequestList();
+            if (diagList != null && !diagList.isEmpty()) {
+                final java.util.List<NursingDiagnosisDetails> toSave = new java.util.ArrayList<>();
+                for (CreateDiagnosisDetailsRequest dr : diagList) {
+                    try {
+                        NursingDiagnosisDetails nd = NursingDiagnosisDetails.fromRequest(newNursingAdmissionChart.getPatId(), newNursingAdmissionChart.getVisitId(), newNursingAdmissionChart.getIpId(), dr);
+                        nd.setCaseSheetId(newNursingAdmissionChart.getId());
+                        nd.setCaseSheetType(11L);
+                        toSave.add(nd);
+                    } catch (Exception ex) {
+                        log.error("Failed to map nursing diagnosis for visit {}: {}", createNursingAdmissionChartRequest.getVisitId(), ex.getMessage());
+                    }
+                }
+                if (!toSave.isEmpty()) {
+                    this.nursingDiagnosisDetailsRepository.saveAll(toSave);
+                    log.debug("Saved {} nursing diagnosis rows for chart id {}", toSave.size(), newNursingAdmissionChart.getId());
+                }
+            }
+            log.debug("END saveNursingAdmissionChart id {}", newNursingAdmissionChart.getId());
+            return new Response(newNursingAdmissionChart.getId());
+        } catch (Exception e) {
+            log.error("Caught with exception while saving NursingAdmissionChart {}", e.getMessage());
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Transactional
+    @Override
+    public Response updateNursingAdmissionChart(Long id, final CreateNursingAdmissionChartRequest createNursingAdmissionChartRequest, final Long userId) {
+        try {
+            log.debug("START updateNursingAdmissionChart id {} request {}", id, createNursingAdmissionChartRequest);
+            final NursingAdmissionChart existing = this.nursingAdmissionChartRepository.findById(id)
+                    .orElseThrow(() -> new NotFoundException("NursingAdmissionChart not found for id:" + id));
+            existing.update(createNursingAdmissionChartRequest, userId);
+
+            this.nursingAdmissionChartRepository.saveAndFlush(existing);
+            final java.util.List<NursingDiagnosisDetails> existingDiags = this.nursingDiagnosisDetailsRepository.findByCaseSheetTypeAndCaseSheetId(11L, existing.getId());
+            if (existingDiags != null && !existingDiags.isEmpty()) {
+                for (NursingDiagnosisDetails ndOld : existingDiags) {
+                    ndOld.setIsValid(0L);
+                }
+                this.nursingDiagnosisDetailsRepository.saveAll(existingDiags);
+            }
+
+            final List<CreateDiagnosisDetailsRequest> diagList = createNursingAdmissionChartRequest.getCreateDiagnosisDetailsRequestList();
+            if (diagList != null && !diagList.isEmpty()) {
+                final java.util.List<NursingDiagnosisDetails> toSave = new java.util.ArrayList<>();
+                for (CreateDiagnosisDetailsRequest dr : diagList) {
+                    try {
+                        NursingDiagnosisDetails nd = NursingDiagnosisDetails.fromRequest(existing.getPatId(), existing.getVisitId(), existing.getIpId(), dr);
+                        nd.setCaseSheetId(existing.getId());
+                        nd.setCaseSheetType(11L);
+                        toSave.add(nd);
+                    } catch (Exception ex) {
+                        log.error("Failed to map nursing diagnosis for update for visit {}: {}", createNursingAdmissionChartRequest.getVisitId(), ex.getMessage());
+                    }
+                }
+                if (!toSave.isEmpty()) {
+                    this.nursingDiagnosisDetailsRepository.saveAll(toSave);
+                    log.debug("Saved {} nursing diagnosis rows for updated chart id {}", toSave.size(), existing.getId());
+                }
+            }
+            log.debug("END updateNursingAdmissionChart id {}", existing.getId());
+            return new Response(existing.getId());
+        } catch (Exception e) {
+            log.error("Caught with exception while updating NursingAdmissionChart {}", e.getMessage());
+            throw new RuntimeException(e);
+        }
+    }
+
 }

@@ -15,6 +15,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import com.ueniweb.swiftwaresolutions.data.ConsultantData;
+import com.ueniweb.swiftwaresolutions.domain.ConsultantRepositoryWrapper;
 
 
 @Service
@@ -27,6 +29,7 @@ public class ClinicalInfoReadPlatformServiceImpl implements ClinicalInfoReadPlat
     private final PrescriptionRepository prescriptionRepository;
     private final PaginationHelper<PrescriptionData> prescriptionDataPaginationHelper = new PaginationHelper<>();
     private final NursingCheckListRepository nursingCheckListRepository;
+    private final ConsultantRepositoryWrapper consultantRepositoryWrapper;
 
 
     @Override
@@ -94,6 +97,17 @@ public class ClinicalInfoReadPlatformServiceImpl implements ClinicalInfoReadPlat
         String countQry = "SELECT count(*)" + consultantRowWrapper.schema();
         log.debug("END of fetchConsultant()");
         return this.jdbcTemplate.query(qry, consultantRowWrapper);
+    }
+
+    @Override
+    public ConsultantData fetchConsultantById(Long id) {
+        try {
+            final com.ueniweb.swiftwaresolutions.domain.Consultant consultant = this.consultantRepositoryWrapper.findOneWithNotFoundDetection(id);
+            return new ConsultantData(consultant.getId().intValue(), consultant.getName());
+        } catch (Exception e) {
+            log.debug("Consultant not found for id {}: {}", id, e.getMessage());
+            return null;
+        }
     }
 
     @Override
@@ -755,5 +769,26 @@ public class ClinicalInfoReadPlatformServiceImpl implements ClinicalInfoReadPlat
         } catch (Exception e) {
             throw new RuntimeException("Failed to fetch nursing checklist: " + e.getMessage());
         }
+    }
+
+    @Override
+    public NursingAdmissionChartData fetchNursingAdmissionChartByVstId(Long vstId) {
+        log.debug("START of fetchNursingAdmissionChartByVstId() vstId: {}", vstId);
+        String qry = NursingAdmissionChartRowMapper.BASE_QUERY + " WHERE nac.visitId = ?";
+
+        NursingAdmissionChartRowMapper rowMapper = new NursingAdmissionChartRowMapper();
+        List<NursingAdmissionChartData> chartList = this.jdbcTemplate.query(qry, rowMapper, vstId);
+
+        if (chartList.isEmpty()) {
+            log.debug("No nursing admission chart found for vstId: {}", vstId);
+            return null;
+        }
+
+        NursingAdmissionChartData chart = chartList.get(0);
+        List<DiagnosisData> diagnosisList = fetchDiagnosisDetailsByVisitId(vstId, 11);
+        chart.setDiagnosisList(diagnosisList);
+
+        log.debug("END of fetchNursingAdmissionChartByVstId() ID: {}", chart.getId());
+        return chart;
     }
 }

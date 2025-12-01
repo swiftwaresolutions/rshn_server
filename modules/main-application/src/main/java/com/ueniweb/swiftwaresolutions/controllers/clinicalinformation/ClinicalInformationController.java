@@ -147,6 +147,11 @@ public class ClinicalInformationController {
         return this.clinicalInfoReadPlatformService.fetchConsultant(consultantName);
     }
 
+    @GetMapping("/fetchConsultantById/{id}")
+    public ConsultantData fetchConsultantById(@PathVariable(name = "id") Long id){
+        return this.clinicalInfoReadPlatformService.fetchConsultantById(id);
+    }
+
     @GetMapping("/fetchUnitDetails")
     public List<UnitData> fetchUnitDetails() {
         return this.clinicalInfoReadPlatformService.fetchUnitDetails();
@@ -698,6 +703,27 @@ public class ClinicalInformationController {
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("Error fetching nursing checklist: " + e.getMessage());
         }
+    }
+
+    @GetMapping("/fetchNursingAdmissionChartByVstId/{vstId}")
+    public NursingAdmissionChartData fetchNursingAdmissionChartByVstId(@PathVariable Long vstId) {
+        return clinicalInfoReadPlatformService.fetchNursingAdmissionChartByVstId(vstId);
+    }
+
+     @PostMapping("/saveNursingAdmissionChart")
+    public Response saveNursingAdmissionChart(@RequestBody CreateNursingAdmissionChartRequest createNursingAdmissionChartRequest) {
+        final AppUser appUser = this.platformSecurityContext.authenticateUser();
+        Long userId = appUser != null && appUser.getUser() != null ? appUser.getUser().getId() : null;
+
+        return this.clinicalInfoWritePlatformService.saveNursingAdmissionChart(createNursingAdmissionChartRequest, userId);
+    }
+
+    @PutMapping("/updateNursingAdmissionChart/{id}")
+    public Response updateNursingAdmissionChart(@PathVariable(name = "id") Long id, @RequestBody CreateNursingAdmissionChartRequest createNursingAdmissionChartRequest) {
+        final AppUser appUser = this.platformSecurityContext.authenticateUser();
+        Long userId = appUser != null && appUser.getUser() != null ? appUser.getUser().getId() : null;
+
+        return this.clinicalInfoWritePlatformService.updateNursingAdmissionChart(id, createNursingAdmissionChartRequest, userId);
     }
 
 }
