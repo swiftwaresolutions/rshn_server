@@ -5,6 +5,7 @@ import com.ueniweb.swiftwaresolutions.core.services.Page;
 import com.ueniweb.swiftwaresolutions.data.*;
 import com.ueniweb.swiftwaresolutions.domain.NeonateCaseSheet;
 import com.ueniweb.swiftwaresolutions.domain.NursingCheckList;
+import com.ueniweb.swiftwaresolutions.domain.ProgressRecord;
 import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.List;
@@ -101,5 +102,7 @@ public interface ClinicalInfoReadPlatformService {
     NursingCheckList getNursingCheckListByVisitId(Integer visitId);
 
     NursingAdmissionChartData fetchNursingAdmissionChartByVstId(Long vstId);
+
+    List<ProgressRecord> getProgressRecordsByVisitId(Integer visitId);
 }
 

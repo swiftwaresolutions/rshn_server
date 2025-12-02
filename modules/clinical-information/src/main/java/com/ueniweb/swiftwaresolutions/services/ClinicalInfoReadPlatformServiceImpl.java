@@ -3,8 +3,10 @@ package com.ueniweb.swiftwaresolutions.services;
 import com.ueniweb.swiftwaresolutions.core.services.PaginationHelper;
 import com.ueniweb.swiftwaresolutions.data.*;
 import com.ueniweb.swiftwaresolutions.domain.NursingCheckList;
+import com.ueniweb.swiftwaresolutions.domain.ProgressRecord;
 import com.ueniweb.swiftwaresolutions.repository.NursingCheckListRepository;
 import com.ueniweb.swiftwaresolutions.repository.PrescriptionRepository;
+import com.ueniweb.swiftwaresolutions.repository.ProgressRecordRepository;
 import com.ueniweb.swiftwaresolutions.rowmapper.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -30,6 +32,7 @@ public class ClinicalInfoReadPlatformServiceImpl implements ClinicalInfoReadPlat
     private final PaginationHelper<PrescriptionData> prescriptionDataPaginationHelper = new PaginationHelper<>();
     private final NursingCheckListRepository nursingCheckListRepository;
     private final ConsultantRepositoryWrapper consultantRepositoryWrapper;
+    private final ProgressRecordRepository progressRecordRepository;
 
 
     @Override
@@ -790,5 +793,9 @@ public class ClinicalInfoReadPlatformServiceImpl implements ClinicalInfoReadPlat
 
         log.debug("END of fetchNursingAdmissionChartByVstId() ID: {}", chart.getId());
         return chart;
+    }
+
+    public List<ProgressRecord> getProgressRecordsByVisitId(Integer visitId) {
+        return progressRecordRepository.findByVisitId(visitId);
     }
 }

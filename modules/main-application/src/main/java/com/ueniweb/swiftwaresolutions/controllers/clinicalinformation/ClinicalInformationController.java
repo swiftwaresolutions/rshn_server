@@ -3,8 +3,10 @@ package com.ueniweb.swiftwaresolutions.controllers.clinicalinformation;
 
 import com.ueniweb.swiftwaresolutions.core.exception.HimsApplicationContextException;
 import com.ueniweb.swiftwaresolutions.core.response.Response;
+import com.ueniweb.swiftwaresolutions.core.response.ResponseDO;
 import com.ueniweb.swiftwaresolutions.data.*;
 import com.ueniweb.swiftwaresolutions.domain.NursingCheckList;
+import com.ueniweb.swiftwaresolutions.domain.ProgressRecord;
 import com.ueniweb.swiftwaresolutions.request.*;
 import com.ueniweb.swiftwaresolutions.security.PlatformSecurityContext;
 
@@ -22,6 +24,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.File;
 import java.nio.file.Files;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -724,6 +727,27 @@ public class ClinicalInformationController {
         Long userId = appUser != null && appUser.getUser() != null ? appUser.getUser().getId() : null;
 
         return this.clinicalInfoWritePlatformService.updateNursingAdmissionChart(id, createNursingAdmissionChartRequest, userId);
+    }
+
+    @PostMapping("/saveOrUpdateProgressRecords")
+    public ResponseDO saveOrUpdateProgressRecords(@RequestBody ProgressRecordRequest progressRecordRequest) {
+        final AppUser appUser = this.platformSecurityContext.authenticateUser();
+        Long userId = appUser.getUser().getId();
+        return this.clinicalInfoWritePlatformService.saveOrUpdateProgressRecords(progressRecordRequest, userId);
+    }
+
+    @GetMapping("/fetchProgressRecordsByVisitId/{visitId}")
+    public ResponseEntity<?> getProgressRecordsByVisitId(@PathVariable Integer visitId) {
+        try {
+            List<ProgressRecord> progressRecords = this.clinicalInfoReadPlatformService.getProgressRecordsByVisitId(visitId);
+            if (progressRecords != null && !progressRecords.isEmpty()) {
+                return ResponseEntity.ok(progressRecords);
+            } else {
+                return ResponseEntity.ok(new ArrayList<>());
+            }
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Error fetching progress records: " + e.getMessage());
+        }
     }
 
 }

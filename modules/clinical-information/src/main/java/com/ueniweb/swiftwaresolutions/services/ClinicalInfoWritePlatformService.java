@@ -1,6 +1,7 @@
 package com.ueniweb.swiftwaresolutions.services;
 
 import com.ueniweb.swiftwaresolutions.core.response.Response;
+import com.ueniweb.swiftwaresolutions.core.response.ResponseDO;
 import com.ueniweb.swiftwaresolutions.data.AnthropometryData;
 import com.ueniweb.swiftwaresolutions.data.PediatricCaseSheetData;
 import com.ueniweb.swiftwaresolutions.data.PrescTemplateDetailsData;
@@ -116,6 +117,5 @@ public interface ClinicalInfoWritePlatformService {
     
     Response updateNursingAdmissionChart(final Long id, final CreateNursingAdmissionChartRequest createNursingAdmissionChartRequest, final Long userId);
 
-
-
+    ResponseDO saveOrUpdateProgressRecords(final ProgressRecordRequest request, Long userId);
 }

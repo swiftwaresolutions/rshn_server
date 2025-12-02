@@ -2,6 +2,7 @@ package com.ueniweb.swiftwaresolutions.services;
 
 import com.ueniweb.swiftwaresolutions.core.exception.HimsApplicationContextException;
 import com.ueniweb.swiftwaresolutions.core.response.Response;
+import com.ueniweb.swiftwaresolutions.core.response.ResponseDO;
 import com.ueniweb.swiftwaresolutions.data.PrescriptionData;
 import com.ueniweb.swiftwaresolutions.data.validator.CaseSheetValidator;
 import com.ueniweb.swiftwaresolutions.data.validator.PrescriptionValidator;
@@ -10,7 +11,6 @@ import com.ueniweb.swiftwaresolutions.infrastructure.exceptions.NoRecordFoundExc
 import com.ueniweb.swiftwaresolutions.infrastructure.exceptions.NotFoundException;
 import com.ueniweb.swiftwaresolutions.repository.*;
 import com.ueniweb.swiftwaresolutions.request.*;
-import com.ueniweb.swiftwaresolutions.rowmapper.SurgeryChecklistRowMapper;
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -138,6 +138,7 @@ public class ClinicalInfoWritePlatformServiceImpl implements ClinicalInfoWritePl
     private final NursingDiagnosisDetailsRepository nursingDiagnosisDetailsRepository;
 
 
+    private final ProgressRecordRepository progressRecordRepository;
 
     private final SurgeryChecklistRepository surgeryChecklistRepository;
 
@@ -1287,6 +1288,80 @@ public class ClinicalInfoWritePlatformServiceImpl implements ClinicalInfoWritePl
             log.error("Caught with exception while updating NursingAdmissionChart {}", e.getMessage());
             throw new RuntimeException(e);
         }
+    }
+
+    @Override
+    public ResponseDO saveOrUpdateProgressRecords(ProgressRecordRequest request, Long userId) {
+        ResponseDO response = new ResponseDO();
+
+        try {
+            if (request == null || request.getEntries() == null || request.getEntries().isEmpty()) {
+                response.setSuccess(false);
+                response.setData("No progress records to save");
+                return response;
+            }
+
+            if (request.getVisitId() == null) {
+                response.setSuccess(false);
+                response.setData("Visit ID is required");
+                return response;
+            }
+
+            for (ProgressRecordRequest.ProgressEntry entry : request.getEntries()) {
+                if (entry.getId() != null && entry.getId() > 0) {
+                    Optional<ProgressRecord> existingById = progressRecordRepository.findById(entry.getId());
+                    if (existingById.isPresent()) {
+                        ProgressRecord record = existingById.get();
+                        if (!record.getVisitId().equals(request.getVisitId())) {
+                            throw new RuntimeException("Record ID " + entry.getId() +
+                                    " does not belong to visit " + request.getVisitId());
+                        }
+                        record.setProgressRecord(entry.getProgressRecord());
+                        record.setDate(entry.getDate());
+                        record.setEditDateTime(LocalDateTime.now());
+                        record.setEditUserId(userId.intValue());
+                        progressRecordRepository.save(record);
+                    } else {
+                        createNewRecord(request, entry, userId);
+                    }
+                } else {
+                    Optional<ProgressRecord> existingByDate = progressRecordRepository
+                            .findByVisitIdAndDate(request.getVisitId(), entry.getDate());
+
+                    if (existingByDate.isPresent()) {
+                        ProgressRecord record = existingByDate.get();
+                        record.setProgressRecord(entry.getProgressRecord());
+                        record.setEditDateTime(LocalDateTime.now());
+                        record.setEditUserId(userId.intValue());
+                        progressRecordRepository.save(record);
+                    } else {
+                        createNewRecord(request, entry, userId);
+                    }
+                }
+            }
+
+            response.setSuccess(true);
+            response.setData("Progress records saved successfully");
+            return response;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            response.setSuccess(false);
+            response.setData("Error saving progress records: " + e.getMessage());
+            return response;
+        }
+    }
+
+    private void createNewRecord(ProgressRecordRequest request, ProgressRecordRequest.ProgressEntry entry, Long userId) {
+        ProgressRecord newRecord = new ProgressRecord();
+        newRecord.setPatId(request.getPatId());
+        newRecord.setVisitId(request.getVisitId());
+        newRecord.setIpId(request.getIpId());
+        newRecord.setDate(entry.getDate());
+        newRecord.setProgressRecord(entry.getProgressRecord());
+        newRecord.setEntryDateTime(LocalDateTime.now());
+        newRecord.setEntryUserId(userId.intValue());
+        progressRecordRepository.save(newRecord);
     }
 
 }
