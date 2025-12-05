@@ -2,23 +2,15 @@ package com.ueniweb.swiftwaresolutions.services;
 
 import com.ueniweb.swiftwaresolutions.core.services.PaginationHelper;
 import com.ueniweb.swiftwaresolutions.data.*;
-import com.ueniweb.swiftwaresolutions.domain.NursingCheckList;
-import com.ueniweb.swiftwaresolutions.domain.ProgressRecord;
-import com.ueniweb.swiftwaresolutions.repository.NursingCheckListRepository;
-import com.ueniweb.swiftwaresolutions.repository.PrescriptionRepository;
-import com.ueniweb.swiftwaresolutions.repository.ProgressRecordRepository;
+import com.ueniweb.swiftwaresolutions.domain.*;
+import com.ueniweb.swiftwaresolutions.repository.*;
 import com.ueniweb.swiftwaresolutions.rowmapper.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import com.ueniweb.swiftwaresolutions.data.ConsultantData;
-import com.ueniweb.swiftwaresolutions.domain.ConsultantRepositoryWrapper;
+import java.util.*;
 
 
 @Service
@@ -33,6 +25,9 @@ public class ClinicalInfoReadPlatformServiceImpl implements ClinicalInfoReadPlat
     private final NursingCheckListRepository nursingCheckListRepository;
     private final ConsultantRepositoryWrapper consultantRepositoryWrapper;
     private final ProgressRecordRepository progressRecordRepository;
+    private final NursingChartRepository nursingChartRepository;
+    private final NursingChartDetailRepository nursingChartDetailRepository;
+
 
 
     @Override
@@ -105,7 +100,7 @@ public class ClinicalInfoReadPlatformServiceImpl implements ClinicalInfoReadPlat
     @Override
     public ConsultantData fetchConsultantById(Long id) {
         try {
-            final com.ueniweb.swiftwaresolutions.domain.Consultant consultant = this.consultantRepositoryWrapper.findOneWithNotFoundDetection(id);
+            final Consultant consultant = this.consultantRepositoryWrapper.findOneWithNotFoundDetection(id);
             return new ConsultantData(consultant.getId().intValue(), consultant.getName());
         } catch (Exception e) {
             log.debug("Consultant not found for id {}: {}", id, e.getMessage());
@@ -798,4 +793,77 @@ public class ClinicalInfoReadPlatformServiceImpl implements ClinicalInfoReadPlat
     public List<ProgressRecord> getProgressRecordsByVisitId(Integer visitId) {
         return progressRecordRepository.findByVisitId(visitId);
     }
+
+    @Override
+    public NursingChartData fetchNursingChartByVstId(Long vstId) {
+        try {
+            log.debug("START fetchNursingChartByVstId vstId: {}", vstId);
+            Optional<NursingChart> chartOpt =
+                this.nursingChartRepository.findByVisitId(vstId);
+            
+            if (!chartOpt.isPresent()) {
+                log.debug("No nursing chart found for vstId: {}", vstId);
+                return null;
+            }
+            NursingChart chart = chartOpt.get();
+            NursingChartData data = new NursingChartData();
+            data.setId(chart.getId());
+            data.setPatId(chart.getPatId());
+            data.setVisitId(chart.getVisitId());
+            data.setIpId(chart.getIpId());
+            data.setHistoryByNurse(chart.getHistoryByNurse());
+            data.setProvisionalDiagnosis(chart.getProvisionalDiagnosis());
+            
+            if (chart.getEntryDateTime() != null) {
+                data.setEntryDateTime(chart.getEntryDateTime().toString());
+            }
+            data.setEntryUserId(chart.getEntryUserId());
+            
+            if (chart.getEditDateTime() != null) {
+                data.setEditDateTime(chart.getEditDateTime().toString());
+            }
+            data.setEditUserId(chart.getEditUserId());
+
+            List<NursingChartDetail> details =
+                this.nursingChartDetailRepository.findByChartIdAndIsValid(chart.getId(), 1);
+            
+            java.util.List<NursingVitalDetailData> detailDataList = new java.util.ArrayList<>();
+            if (details != null && !details.isEmpty()) {
+                for (NursingChartDetail detail : details) {
+                    NursingVitalDetailData detailData = new NursingVitalDetailData();
+                    detailData.setId(detail.getId());
+                    detailData.setChartId(detail.getChartId());
+                    
+                    if (detail.getDate() != null) {
+                        detailData.setDate(detail.getDate().toString());
+                    }
+                    
+                    detailData.setTemp(detail.getTemp());
+                    detailData.setPulse(detail.getPulse());
+                    detailData.setRespRate(detail.getRespRate());
+                    detailData.setBp(detail.getBp());
+                    detailData.setBowels(detail.getBowels());
+                    detailData.setUrine(detail.getUrine());
+                    detailData.setNurseRecords(detail.getNurseRecords());
+                    
+                    if (detail.getTime() != null) {
+                        detailData.setTime(detail.getTime().toString());
+                    }
+                    
+                    detailData.setIsValid(detail.getIsValid());
+                    detailDataList.add(detailData);
+                }
+            }
+            
+            data.setNursingVitalDetails(detailDataList);
+            
+            log.debug("END fetchNursingChartByVstId ID: {}, with {} vital details", chart.getId(), detailDataList.size());
+            return data;
+            
+        } catch (Exception e) {
+            log.error("Error fetching nursing chart by vstId: {}", vstId, e);
+            throw new RuntimeException("Failed to fetch nursing chart: " + e.getMessage());
+        }
+    }
 }
+

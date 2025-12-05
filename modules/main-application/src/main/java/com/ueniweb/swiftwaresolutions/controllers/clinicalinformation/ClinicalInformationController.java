@@ -750,5 +750,17 @@ public class ClinicalInformationController {
         }
     }
 
+    @PostMapping("/saveNursingChart")
+    public Response saveNursingChart(@RequestBody CreateNursingChartRequest createNursingChartRequest) {
+        final AppUser appUser = this.platformSecurityContext.authenticateUser();
+        Long userId = appUser != null && appUser.getUser() != null ? appUser.getUser().getId() : null;
+        return this.clinicalInfoWritePlatformService.saveNursingChart(createNursingChartRequest, userId);
+    }
+
+    @GetMapping("/fetchNursingChartByVstId/{vstId}")
+    public NursingChartData fetchNursingChartByVstId(@PathVariable Long vstId) {
+        return this.clinicalInfoReadPlatformService.fetchNursingChartByVstId(vstId);
+    }
+
 }
 

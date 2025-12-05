@@ -134,7 +134,7 @@ public class ClinicalInfoWritePlatformServiceImpl implements ClinicalInfoWritePl
     private final NursingIoRepositoryWrapper nursingIoRepositoryWrapper;
 
     private final NursingAdmissionChartRepository nursingAdmissionChartRepository;
-    
+
     private final NursingDiagnosisDetailsRepository nursingDiagnosisDetailsRepository;
 
 
@@ -178,6 +178,10 @@ public class ClinicalInfoWritePlatformServiceImpl implements ClinicalInfoWritePl
 
     private final ENTDiagnosisDetailsRepository entDiagnosisDetailsRepository;
 
+    private final NursingChartRepository nursingChartRepository;
+
+    private final NursingChartDetailRepository nursingChartDetailRepository;
+
 
     @Transactional
     @Override
@@ -186,12 +190,12 @@ public class ClinicalInfoWritePlatformServiceImpl implements ClinicalInfoWritePl
             log.debug("START saveGeneralCaseSheet request {}", generalCaseSheetRequest);
             this.caseSheetValidator.validateComplaintData(generalCaseSheetRequest.getCreateComplaintDetailsRequestList());
             this.caseSheetValidator.GeneralCaseSheetDate(generalCaseSheetRequest);
-            if (generalCaseSheetRequest.getVisitId()==0 || generalCaseSheetRequest.getPatientId() ==0) {
+            if (generalCaseSheetRequest.getVisitId() == 0 || generalCaseSheetRequest.getPatientId() == 0) {
                 throw new NullPointerException("Choose Proper Patient!");
             }
 
             final GeneralCaseSheet newGeneralCaseSheet = GeneralCaseSheet.to(generalCaseSheetRequest);
-            newGeneralCaseSheet.setComplaintDetailsList(ComplaintDetails.to(newGeneralCaseSheet,generalCaseSheetRequest.getCreateComplaintDetailsRequestList()));
+            newGeneralCaseSheet.setComplaintDetailsList(ComplaintDetails.to(newGeneralCaseSheet, generalCaseSheetRequest.getCreateComplaintDetailsRequestList()));
             newGeneralCaseSheet.setDiagnosisDetailsList(DiagnosisDetails.to(newGeneralCaseSheet, generalCaseSheetRequest.getCreateDiagnosisDetailsRequestList()));
             generalCaseSheetRepository.saveAndFlush(newGeneralCaseSheet);
             log.debug("END saveGeneralCaseSheet id ");
@@ -213,10 +217,10 @@ public class ClinicalInfoWritePlatformServiceImpl implements ClinicalInfoWritePl
             final Prescription prescription = Prescription.to(createPrescriptionRequest);
             this.entityManager.persist(prescription);  // for inserting display
             prescription.setDisplay(prescription.getId().toString());// for inserting display
-            prescription.setPhDescriptionDetailsList(PrescriptionDetails.to(prescription,createPrescriptionRequest.getCreatePrescriptionDetailsRequestList()));
+            prescription.setPhDescriptionDetailsList(PrescriptionDetails.to(prescription, createPrescriptionRequest.getCreatePrescriptionDetailsRequestList()));
             final Prescription newPrescription = prescriptionRepository.saveAndFlush(prescription);
             log.debug("END savePrescription id ");
-            System.out.print("vada"+newPrescription.getId());
+            System.out.print("vada" + newPrescription.getId());
             return this.clinicalInfoReadPlatformService.fetchPrescriptionDetailsById(newPrescription.getId());
         } catch (Exception e) {
             log.error("Caught with exception while saving savePrescription {}", e.getMessage());
@@ -240,14 +244,14 @@ public class ClinicalInfoWritePlatformServiceImpl implements ClinicalInfoWritePl
 
     @Transactional
     @Override
-    public Response updateGeneralCaseSheet(Long id, GeneralCaseSheetRequest generalCaseSheetRequest,Integer caseSheetType) {
+    public Response updateGeneralCaseSheet(Long id, GeneralCaseSheetRequest generalCaseSheetRequest, Integer caseSheetType) {
         try {
-            log.debug("START of updateGeneralCaseSheet() id {} request {} caseSheetType{}", id, generalCaseSheetRequest,caseSheetType);
+            log.debug("START of updateGeneralCaseSheet() id {} request {} caseSheetType{}", id, generalCaseSheetRequest, caseSheetType);
             final GeneralCaseSheet generalCaseSheet = this.generalCaseSheetRepositoryWrapper.findOneWithNotFoundDetection(id);
             generalCaseSheet.update(generalCaseSheetRequest);
             this.generalCaseSheetRepository.saveAndFlush(generalCaseSheet);
 
-            final List<ComplaintDetails> complaintDetailsList = this.complaintDetailsRepository.fetchComplaintDetailsBycaseSheetId(generalCaseSheet.getId(),caseSheetType);
+            final List<ComplaintDetails> complaintDetailsList = this.complaintDetailsRepository.fetchComplaintDetailsBycaseSheetId(generalCaseSheet.getId(), caseSheetType);
             for (ComplaintDetails complaintDetails : complaintDetailsList) {
                 complaintDetails.setIsValid(0L);
                 complaintDetailsRepository.save(complaintDetails);
@@ -259,7 +263,7 @@ public class ClinicalInfoWritePlatformServiceImpl implements ClinicalInfoWritePl
                 diagnosisDetailsRepository.save(diagnosisDetails);
             }
 
-            generalCaseSheet.setComplaintDetailsList(ComplaintDetails.to(generalCaseSheet,generalCaseSheetRequest.getCreateComplaintDetailsRequestList()));
+            generalCaseSheet.setComplaintDetailsList(ComplaintDetails.to(generalCaseSheet, generalCaseSheetRequest.getCreateComplaintDetailsRequestList()));
             generalCaseSheet.setDiagnosisDetailsList(DiagnosisDetails.to(generalCaseSheet, generalCaseSheetRequest.getCreateDiagnosisDetailsRequestList()));
             generalCaseSheetRepository.saveAndFlush(generalCaseSheet);
 
@@ -283,7 +287,7 @@ public class ClinicalInfoWritePlatformServiceImpl implements ClinicalInfoWritePl
             }
             this.prescriptionDetailsRepository.saveAllAndFlush(prescriptionDetailsList);
             prescription.setPhDescriptionDetailsList(PrescriptionDetails.to(prescription, updatePrescriptionRequest.getCreatePrescriptionDetailsRequestList()));
-          //  prescription.update(updatePrescriptionRequest);
+            //  prescription.update(updatePrescriptionRequest);
             this.prescriptionRepository.saveAndFlush(prescription);
             log.debug("END updatePrescription id {} request {}", id, updatePrescriptionRequest);
             return this.clinicalInfoReadPlatformService.fetchPrescriptionDetailsById(prescription.getId());
@@ -383,7 +387,7 @@ public class ClinicalInfoWritePlatformServiceImpl implements ClinicalInfoWritePl
             if (investigationOrders == null) {
                 throw new NotFoundException("This patientId doesn't have any investigation order");
             }
-            for (InvestigationOrder investigationOrder: investigationOrders) {
+            for (InvestigationOrder investigationOrder : investigationOrders) {
                 this.investigationOrderRepository.deleteById(investigationOrder.getId());
             }
             log.debug("END deleteLabOrderByLabId ");
@@ -406,6 +410,7 @@ public class ClinicalInfoWritePlatformServiceImpl implements ClinicalInfoWritePl
             throw new RuntimeException(e.getMessage());
         }
     }
+
     @Override
     public Response saveOrderDiscount(CreateOrderDiscountRequest createOrderDiscountRequest) {
         try {
@@ -426,7 +431,7 @@ public class ClinicalInfoWritePlatformServiceImpl implements ClinicalInfoWritePl
         try {
             log.debug("START savePrescriptionTemplate request {}", createPrescTemplateRequest);
             final PrescTemplate prescTemplate = PrescTemplate.to(createPrescTemplateRequest);
-            prescTemplate.setPrescTemplateDetailsList(PrescTemplateDetails.to(prescTemplate,createPrescTemplateRequest.getCreatePrescTemplateRequestList()));
+            prescTemplate.setPrescTemplateDetailsList(PrescTemplateDetails.to(prescTemplate, createPrescTemplateRequest.getCreatePrescTemplateRequestList()));
             this.prescTemplateRepository.saveAndFlush(prescTemplate);
             log.debug("END savePrescription id ");
             return new Response(prescTemplate.getId());
@@ -443,7 +448,7 @@ public class ClinicalInfoWritePlatformServiceImpl implements ClinicalInfoWritePl
             log.debug("START deleteOrderDiscByPatId patId {}", patId);
             OrderDiscount orderDiscount = this.orderDiscountRepositoryWrapper.findOneWithNotFoundDetectionByPatId(patId);
             if (orderDiscount == null) {
-                throw new NoRecordFoundException("Order discount not found for this patient Id:"+patId);
+                throw new NoRecordFoundException("Order discount not found for this patient Id:" + patId);
             }
             this.orderDiscountRepository.deleteById(orderDiscount.getId());
             log.debug("END deleteOrderDiscByPatId ");
@@ -480,7 +485,7 @@ public class ClinicalInfoWritePlatformServiceImpl implements ClinicalInfoWritePl
             log.debug("START savePediatricCaseSheet request {}", createPeadiatricCaseSheetRequest);
 
             final PediatricCaseSheet newpediatricCaseSheet = PediatricCaseSheet.to(createPeadiatricCaseSheetRequest);
-            newpediatricCaseSheet.setPediatricComplaintDetailsList(PediatricComplaintDetails.to(newpediatricCaseSheet,createPeadiatricCaseSheetRequest.getCreateComplaintDetailsRequestList()));
+            newpediatricCaseSheet.setPediatricComplaintDetailsList(PediatricComplaintDetails.to(newpediatricCaseSheet, createPeadiatricCaseSheetRequest.getCreateComplaintDetailsRequestList()));
             pediatricCaseSheetRepository.saveAndFlush(newpediatricCaseSheet);
 
             log.debug("END savePediatricCaseSheet id ");
@@ -495,20 +500,20 @@ public class ClinicalInfoWritePlatformServiceImpl implements ClinicalInfoWritePl
 
     @Transactional
     @Override
-    public Response updatePediatricCaseSheet(Long id, CreatePeadiatricCaseSheetRequest createPeadiatricCaseSheetRequest,Integer caseSheetType) {
+    public Response updatePediatricCaseSheet(Long id, CreatePeadiatricCaseSheetRequest createPeadiatricCaseSheetRequest, Integer caseSheetType) {
         try {
             log.debug("START of updatePediatricCaseSheet() id {} request {}", id, createPeadiatricCaseSheetRequest);
             final PediatricCaseSheet pediatricCaseSheet = this.pediatricCaseSheetWrapper.findOneWithNotFoundDetection(id);
             pediatricCaseSheet.update(createPeadiatricCaseSheetRequest);
             this.pediatricCaseSheetRepository.saveAndFlush(pediatricCaseSheet);
 
-            final List<ComplaintDetails> complaintDetailsList = this.complaintDetailsRepository.fetchComplaintDetailsBycaseSheetId(pediatricCaseSheet.getId(),caseSheetType);
+            final List<ComplaintDetails> complaintDetailsList = this.complaintDetailsRepository.fetchComplaintDetailsBycaseSheetId(pediatricCaseSheet.getId(), caseSheetType);
             for (ComplaintDetails complaintDetails : complaintDetailsList) {
                 complaintDetails.setIsValid(0L);
                 complaintDetailsRepository.save(complaintDetails);
             }
-            
-            pediatricCaseSheet.setPediatricComplaintDetailsList(PediatricComplaintDetails.to(pediatricCaseSheet,createPeadiatricCaseSheetRequest.getCreateComplaintDetailsRequestList()));
+
+            pediatricCaseSheet.setPediatricComplaintDetailsList(PediatricComplaintDetails.to(pediatricCaseSheet, createPeadiatricCaseSheetRequest.getCreateComplaintDetailsRequestList()));
             pediatricCaseSheetRepository.saveAndFlush(pediatricCaseSheet);
 
             log.debug("END of updatePediatricCaseSheet() id {} request {}", id, createPeadiatricCaseSheetRequest);
@@ -525,7 +530,7 @@ public class ClinicalInfoWritePlatformServiceImpl implements ClinicalInfoWritePl
             log.debug("START saveNeonateCaseSheet request {}", createNeoNateCaseSheetRequest);
 
             final NeonateCaseSheet newNeonateCaseSheet = NeonateCaseSheet.to(createNeoNateCaseSheetRequest);
-            newNeonateCaseSheet.setNeoNateComplaintDetailsList(NeoNateComplaintDetails.to(newNeonateCaseSheet,createNeoNateCaseSheetRequest.getCreateComplaintDetailsRequestList()));
+            newNeonateCaseSheet.setNeoNateComplaintDetailsList(NeoNateComplaintDetails.to(newNeonateCaseSheet, createNeoNateCaseSheetRequest.getCreateComplaintDetailsRequestList()));
             neonateCaseSheetRepository.saveAndFlush(newNeonateCaseSheet);
 
             log.debug("END saveNeonateCaseSheet id ");
@@ -540,20 +545,20 @@ public class ClinicalInfoWritePlatformServiceImpl implements ClinicalInfoWritePl
 
     @Transactional
     @Override
-    public Response updateNeonateCaseSheet(Long id, CreateNeoNateCaseSheetRequest createNeoNateCaseSheetRequest,Integer caseSheetType) {
+    public Response updateNeonateCaseSheet(Long id, CreateNeoNateCaseSheetRequest createNeoNateCaseSheetRequest, Integer caseSheetType) {
         try {
             log.debug("START of updateNeonateCaseSheet() id {} request {}", id, createNeoNateCaseSheetRequest);
             final NeonateCaseSheet neonateCaseSheet = this.neonateCaseSheetRepositoryWrapper.findOneWithNotFoundDetection(id);
             neonateCaseSheet.update(createNeoNateCaseSheetRequest);
             this.neonateCaseSheetRepository.saveAndFlush(neonateCaseSheet);
 
-            final List<ComplaintDetails> complaintDetailsList = this.complaintDetailsRepository.fetchComplaintDetailsBycaseSheetId(neonateCaseSheet.getId(),caseSheetType);
+            final List<ComplaintDetails> complaintDetailsList = this.complaintDetailsRepository.fetchComplaintDetailsBycaseSheetId(neonateCaseSheet.getId(), caseSheetType);
             for (ComplaintDetails complaintDetails : complaintDetailsList) {
                 complaintDetails.setIsValid(0L);
                 complaintDetailsRepository.save(complaintDetails);
             }
 
-            neonateCaseSheet.setNeoNateComplaintDetailsList(NeoNateComplaintDetails.to(neonateCaseSheet,createNeoNateCaseSheetRequest.getCreateComplaintDetailsRequestList()));
+            neonateCaseSheet.setNeoNateComplaintDetailsList(NeoNateComplaintDetails.to(neonateCaseSheet, createNeoNateCaseSheetRequest.getCreateComplaintDetailsRequestList()));
             neonateCaseSheetRepository.saveAndFlush(neonateCaseSheet);
 
             log.debug("END of updateNeonateCaseSheet() id {} request {}", id, createNeoNateCaseSheetRequest);
@@ -598,6 +603,7 @@ public class ClinicalInfoWritePlatformServiceImpl implements ClinicalInfoWritePl
             throw e;
         }
     }
+
     @Override
     public Response saveOpVitals(CreateOPVitalsRequest createOPVitalsRequest) {
         try {
@@ -689,9 +695,9 @@ public class ClinicalInfoWritePlatformServiceImpl implements ClinicalInfoWritePl
                 dentalTeethTreatDetailsRepository.save(teethTreatDetails);
             }
 
-            dentalCaseSheet.setDentalcomplaintDetailsList(DentalComplaintDetails.to(dentalCaseSheet,createdentalCaseSheetRequest.getCreateComplaintDetailsRequestList()));
-            dentalCaseSheet.setDentalTeethExamDetailsList(DentalTeethExamDetails.to(dentalCaseSheet,createdentalCaseSheetRequest.getCreateTeethExamDetailsRequestList()));
-            dentalCaseSheet.setDentalTeethTreatDetailsList(DentalTeethTreatDetails.to(dentalCaseSheet,createdentalCaseSheetRequest.getCreateTeethTreatDetailsRequestList()));
+            dentalCaseSheet.setDentalcomplaintDetailsList(DentalComplaintDetails.to(dentalCaseSheet, createdentalCaseSheetRequest.getCreateComplaintDetailsRequestList()));
+            dentalCaseSheet.setDentalTeethExamDetailsList(DentalTeethExamDetails.to(dentalCaseSheet, createdentalCaseSheetRequest.getCreateTeethExamDetailsRequestList()));
+            dentalCaseSheet.setDentalTeethTreatDetailsList(DentalTeethTreatDetails.to(dentalCaseSheet, createdentalCaseSheetRequest.getCreateTeethTreatDetailsRequestList()));
             dentalCaseSheetRepository.saveAndFlush(dentalCaseSheet);
 
             log.debug("END of updateDentalCaseSheet() id {} request {}", id, createdentalCaseSheetRequest);
@@ -708,7 +714,7 @@ public class ClinicalInfoWritePlatformServiceImpl implements ClinicalInfoWritePl
             log.debug("START saveDischargeSummary request {}", createDischargeSummaryRequest);
 
             final DischargeSummary newDischargeSummary = DischargeSummary.to(createDischargeSummaryRequest);
-            newDischargeSummary.setSummaryDiagnosisDetailsList(SummaryDiagnosisDetails.to(newDischargeSummary,createDischargeSummaryRequest.getCreateSummaryDiagnosisDetailsRequestList()));
+            newDischargeSummary.setSummaryDiagnosisDetailsList(SummaryDiagnosisDetails.to(newDischargeSummary, createDischargeSummaryRequest.getCreateSummaryDiagnosisDetailsRequestList()));
             newDischargeSummary.setLabAndInvestigationSummaryList(LabAndInvestigationSummary.to(newDischargeSummary, createDischargeSummaryRequest.getCreateLabAndInvSummaryRequestList()));
             newDischargeSummary.setDischargeSummaryConsultantList(DischargeSummaryConsultant.to(newDischargeSummary, createDischargeSummaryRequest.getCreateDisSumConsRequestList()));
             newDischargeSummary.setDischargeSummaryDeptList(DischargeSummaryDept.to(newDischargeSummary, createDischargeSummaryRequest.getCreateDisSumDeptRequestList()));
@@ -758,7 +764,7 @@ public class ClinicalInfoWritePlatformServiceImpl implements ClinicalInfoWritePl
             }
 
 
-            dischargeSummary.setSummaryDiagnosisDetailsList(SummaryDiagnosisDetails.to(dischargeSummary,createDischargeSummaryRequest.getCreateSummaryDiagnosisDetailsRequestList()));
+            dischargeSummary.setSummaryDiagnosisDetailsList(SummaryDiagnosisDetails.to(dischargeSummary, createDischargeSummaryRequest.getCreateSummaryDiagnosisDetailsRequestList()));
             dischargeSummary.setLabAndInvestigationSummaryList(LabAndInvestigationSummary.to(dischargeSummary, createDischargeSummaryRequest.getCreateLabAndInvSummaryRequestList()));
             dischargeSummary.setDischargeSummaryConsultantList(DischargeSummaryConsultant.to(dischargeSummary, createDischargeSummaryRequest.getCreateDisSumConsRequestList()));
             dischargeSummary.setDischargeSummaryDeptList(DischargeSummaryDept.to(dischargeSummary, createDischargeSummaryRequest.getCreateDisSumDeptRequestList()));
@@ -771,6 +777,7 @@ public class ClinicalInfoWritePlatformServiceImpl implements ClinicalInfoWritePl
             throw new RuntimeException(e);
         }
     }
+
     @Override
     @Transactional
     public Response saveAntenatalCaseSheet(final CreateAntenatalCaseSheetRequest createAntenatalCaseSheetRequest) {
@@ -782,12 +789,12 @@ public class ClinicalInfoWritePlatformServiceImpl implements ClinicalInfoWritePl
 //                throw new NullPointerException("Choose Proper Patient!");
 //            }
 
-        final AntenatalCaseSheet newAntenatalCaseSheet = AntenatalCaseSheet.to(createAntenatalCaseSheetRequest);
-        newAntenatalCaseSheet.setAntenatalCaseSheetPreviousList(AntenatalCaseSheetPrevious.to(newAntenatalCaseSheet,createAntenatalCaseSheetRequest.getCreateAntenatalPreviousCaseSheetRequests()));
-        // newAntenatalCaseSheet.setAntenatalCaseSheetCurrentSet(AntenatalCaseSheetCurrent.to(newAntenatalCaseSheet, createAntenatalCaseSheetRequest.getCreateAntenatalCurrentCaseSheetRequests()));
-        this.antenatalCaseSheetRepository.saveAndFlush(newAntenatalCaseSheet);
+            final AntenatalCaseSheet newAntenatalCaseSheet = AntenatalCaseSheet.to(createAntenatalCaseSheetRequest);
+            newAntenatalCaseSheet.setAntenatalCaseSheetPreviousList(AntenatalCaseSheetPrevious.to(newAntenatalCaseSheet, createAntenatalCaseSheetRequest.getCreateAntenatalPreviousCaseSheetRequests()));
+            // newAntenatalCaseSheet.setAntenatalCaseSheetCurrentSet(AntenatalCaseSheetCurrent.to(newAntenatalCaseSheet, createAntenatalCaseSheetRequest.getCreateAntenatalCurrentCaseSheetRequests()));
+            this.antenatalCaseSheetRepository.saveAndFlush(newAntenatalCaseSheet);
             log.debug("END saveAntenatal id ");
-        return new Response(newAntenatalCaseSheet.getId());
+            return new Response(newAntenatalCaseSheet.getId());
         } catch (Exception e) {
             log.error("Caught with exception while saving GeneralCaseSheet {}", e.getMessage());
             throw new RuntimeException(e);
@@ -810,7 +817,7 @@ public class ClinicalInfoWritePlatformServiceImpl implements ClinicalInfoWritePl
                 antenatalCaseSheetPreRepository.save(antenatalCaseSheetPrevious);
             }
 
-            antenatalCaseSheet.setAntenatalCaseSheetPreviousList(AntenatalCaseSheetPrevious.to(antenatalCaseSheet,createAntenatalCaseSheetRequest.getCreateAntenatalPreviousCaseSheetRequests()));
+            antenatalCaseSheet.setAntenatalCaseSheetPreviousList(AntenatalCaseSheetPrevious.to(antenatalCaseSheet, createAntenatalCaseSheetRequest.getCreateAntenatalPreviousCaseSheetRequests()));
             antenatalCaseSheetRepository.saveAndFlush(antenatalCaseSheet);
 
             log.debug("END of updateAntenatalCaseSheet() id {} request {}", id, createAntenatalCaseSheetRequest);
@@ -819,6 +826,7 @@ public class ClinicalInfoWritePlatformServiceImpl implements ClinicalInfoWritePl
             throw new RuntimeException(e);
         }
     }
+
     @Override
     @Transactional
     public Response saveSurgeryCaseSheet(final CreateSurgeryCaseSheetRequest createSurgeryCaseSheetRequest) {
@@ -831,9 +839,9 @@ public class ClinicalInfoWritePlatformServiceImpl implements ClinicalInfoWritePl
 //            }
 
             final SurgeryCaseSheet newSurgeryCaseSheet = SurgeryCaseSheet.to(createSurgeryCaseSheetRequest);
-            newSurgeryCaseSheet.setSurgerySurgonList(SurgerySurgon.to(newSurgeryCaseSheet,createSurgeryCaseSheetRequest.getCreateSurigicalSurgonRequests()));
+            newSurgeryCaseSheet.setSurgerySurgonList(SurgerySurgon.to(newSurgeryCaseSheet, createSurgeryCaseSheetRequest.getCreateSurigicalSurgonRequests()));
             newSurgeryCaseSheet.setSurgeryNurseList(SurgeryNurse.to(newSurgeryCaseSheet, createSurgeryCaseSheetRequest.getCreateSurigicalNurseRequests()));
-            newSurgeryCaseSheet.setSurgeryDataList(SurgeryName.to(newSurgeryCaseSheet,createSurgeryCaseSheetRequest.getCreateSurgicalSurgeryRequests()));
+            newSurgeryCaseSheet.setSurgeryDataList(SurgeryName.to(newSurgeryCaseSheet, createSurgeryCaseSheetRequest.getCreateSurgicalSurgeryRequests()));
             this.surgeryCaseSheetRepository.saveAndFlush(newSurgeryCaseSheet);
             log.debug("END saveAntenatal id ");
             return new Response(newSurgeryCaseSheet.getId());
@@ -871,9 +879,9 @@ public class ClinicalInfoWritePlatformServiceImpl implements ClinicalInfoWritePl
                 surgerySurgonRepository.save(surgerySurgon);
             }
 
-            surgeryCaseSheet.setSurgeryNurseList(SurgeryNurse.to(surgeryCaseSheet,createSurgeryCaseSheetRequest.getCreateSurigicalNurseRequests()));
-            surgeryCaseSheet.setSurgeryDataList(SurgeryName.to(surgeryCaseSheet,createSurgeryCaseSheetRequest.getCreateSurgicalSurgeryRequests()));
-            surgeryCaseSheet.setSurgerySurgonList(SurgerySurgon.to(surgeryCaseSheet,createSurgeryCaseSheetRequest.getCreateSurigicalSurgonRequests()));
+            surgeryCaseSheet.setSurgeryNurseList(SurgeryNurse.to(surgeryCaseSheet, createSurgeryCaseSheetRequest.getCreateSurigicalNurseRequests()));
+            surgeryCaseSheet.setSurgeryDataList(SurgeryName.to(surgeryCaseSheet, createSurgeryCaseSheetRequest.getCreateSurgicalSurgeryRequests()));
+            surgeryCaseSheet.setSurgerySurgonList(SurgerySurgon.to(surgeryCaseSheet, createSurgeryCaseSheetRequest.getCreateSurigicalSurgonRequests()));
             surgeryCaseSheetRepository.saveAndFlush(surgeryCaseSheet);
 
 
@@ -883,6 +891,7 @@ public class ClinicalInfoWritePlatformServiceImpl implements ClinicalInfoWritePl
             throw new RuntimeException(e);
         }
     }
+
     @Override
     public Response saveNursingIoSheet(CreateNursingIoReuest createNursingIoReuest) {
         try {
@@ -899,6 +908,7 @@ public class ClinicalInfoWritePlatformServiceImpl implements ClinicalInfoWritePl
 
 
     }
+
     @Transactional
     @Override
     public Response updateNursingIoSheet(Long id, CreateNursingIoReuest createNursingIoReuest) {
@@ -914,6 +924,7 @@ public class ClinicalInfoWritePlatformServiceImpl implements ClinicalInfoWritePl
             throw new RuntimeException(e);
         }
     }
+
     @Override
     public Response saveSurgeryChecklist(CreateSurgeryChecklistReuest createSurgeryChecklistReuest) {
         try {
@@ -947,18 +958,17 @@ public class ClinicalInfoWritePlatformServiceImpl implements ClinicalInfoWritePl
 
     @Transactional
     @Override
-    public Response saveIpProcedureCaseSheet(final CreateIpProcedureCaseSheetRequest createIpProcedureCaseSheetRequest){
+    public Response saveIpProcedureCaseSheet(final CreateIpProcedureCaseSheetRequest createIpProcedureCaseSheetRequest) {
         try {
             log.debug("START saveGeneralCaseSheet request {}", createIpProcedureCaseSheetRequest);
-            if (createIpProcedureCaseSheetRequest.getVisitId()==0 || createIpProcedureCaseSheetRequest.getPatientId()==0){
+            if (createIpProcedureCaseSheetRequest.getVisitId() == 0 || createIpProcedureCaseSheetRequest.getPatientId() == 0) {
                 throw new NullPointerException("Choose Proper Patient!");
             }
             final IpProcedureCaseSheet newIpProcedureCaseSheet = IpProcedureCaseSheet.to(createIpProcedureCaseSheetRequest);
             ipProcedureCaseSheetRepository.saveAndFlush(newIpProcedureCaseSheet);
             log.debug("End saveIpProcedureCaseSheet");
             return new Response(newIpProcedureCaseSheet.getId());
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             log.error("Caught with exception while saving GeneralCaseSheet {}", e.getMessage());
             throw new RuntimeException(e);
 
@@ -976,11 +986,11 @@ public class ClinicalInfoWritePlatformServiceImpl implements ClinicalInfoWritePl
 
             log.debug("END of updateIpProcedureCaseSheet() id {} request {}", id, createIpProcedureCaseSheetRequest);
             return new Response(ipProcedureCaseSheet.getId());
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
+
     @Override
     public Response saveAldreteScoreChart(CreateAldreteScoreChartReuest createAldreteScoreChartReuest) {
         try {
@@ -1021,13 +1031,13 @@ public class ClinicalInfoWritePlatformServiceImpl implements ClinicalInfoWritePl
             log.debug("START saveDermatologyCaseSheet request {}", createDermatologyCaseSheetRequest);
             this.caseSheetValidator.validateComplaintData(createDermatologyCaseSheetRequest.getCreateComplaintDetailsRequestList());
             //this.caseSheetValidator.DermatologyCaseSheetDate(createDermatologyCaseSheetRequest);
-            if (createDermatologyCaseSheetRequest.getVisitId()==0 || createDermatologyCaseSheetRequest.getPatientId() ==0) {
+            if (createDermatologyCaseSheetRequest.getVisitId() == 0 || createDermatologyCaseSheetRequest.getPatientId() == 0) {
                 throw new NullPointerException("Choose Proper Patient!");
             }
 
             final DermatologyCaseSheet newDermatologyCaseSheet = DermatologyCaseSheet.to(createDermatologyCaseSheetRequest);
-            newDermatologyCaseSheet.setDermatologyComplaintDetailsList(DermatologyComplaintDetails.to(newDermatologyCaseSheet,createDermatologyCaseSheetRequest.getCreateComplaintDetailsRequestList()));
-            newDermatologyCaseSheet.setDermatologyDiagnosisDetailsList(DermatologyDiagnosisDetails.to(newDermatologyCaseSheet,createDermatologyCaseSheetRequest.getCreateDiagnosisDetailsRequestList()));
+            newDermatologyCaseSheet.setDermatologyComplaintDetailsList(DermatologyComplaintDetails.to(newDermatologyCaseSheet, createDermatologyCaseSheetRequest.getCreateComplaintDetailsRequestList()));
+            newDermatologyCaseSheet.setDermatologyDiagnosisDetailsList(DermatologyDiagnosisDetails.to(newDermatologyCaseSheet, createDermatologyCaseSheetRequest.getCreateDiagnosisDetailsRequestList()));
             dermatologyCaseSheetRepository.saveAndFlush(newDermatologyCaseSheet);
             log.debug("END saveDermatologyCaseSheet id ");
             return new Response(newDermatologyCaseSheet.getId());
@@ -1041,14 +1051,14 @@ public class ClinicalInfoWritePlatformServiceImpl implements ClinicalInfoWritePl
 
     @Transactional
     @Override
-    public Response updateDermatologyCaseSheet(Long id, CreateDermatologyCaseSheetRequest createDermatologyCaseSheetRequest,Integer caseSheetType) {
+    public Response updateDermatologyCaseSheet(Long id, CreateDermatologyCaseSheetRequest createDermatologyCaseSheetRequest, Integer caseSheetType) {
         try {
-            log.debug("START of updateDermatologyCaseSheet() id {} request {} caseSheetType{}", id, createDermatologyCaseSheetRequest,caseSheetType);
+            log.debug("START of updateDermatologyCaseSheet() id {} request {} caseSheetType{}", id, createDermatologyCaseSheetRequest, caseSheetType);
             final DermatologyCaseSheet dermatologyCaseSheet = this.dermatologyCaseSheetRepositoryWrapper.findOneWithNotFoundDetection(id);
             dermatologyCaseSheet.update(createDermatologyCaseSheetRequest);
             this.dermatologyCaseSheetRepository.saveAndFlush(dermatologyCaseSheet);
 
-            final List<DermatologyComplaintDetails> complaintDetailsList = this.dermatologyComplainDetailsRepository.fetchDermatologyComplaintDetailsBycaseSheetId(dermatologyCaseSheet.getId(),caseSheetType);
+            final List<DermatologyComplaintDetails> complaintDetailsList = this.dermatologyComplainDetailsRepository.fetchDermatologyComplaintDetailsBycaseSheetId(dermatologyCaseSheet.getId(), caseSheetType);
             for (DermatologyComplaintDetails dermatologyComplaintDetails : complaintDetailsList) {
                 dermatologyComplaintDetails.setIsValid(0L);
                 dermatologyComplainDetailsRepository.save(dermatologyComplaintDetails);
@@ -1061,7 +1071,7 @@ public class ClinicalInfoWritePlatformServiceImpl implements ClinicalInfoWritePl
                 dermatologyDiagnosisDetailsRepository.save(dermatologyDiagnosisDetails);
             }
 
-            dermatologyCaseSheet.setDermatologyComplaintDetailsList(DermatologyComplaintDetails.to(dermatologyCaseSheet,createDermatologyCaseSheetRequest.getCreateComplaintDetailsRequestList()));
+            dermatologyCaseSheet.setDermatologyComplaintDetailsList(DermatologyComplaintDetails.to(dermatologyCaseSheet, createDermatologyCaseSheetRequest.getCreateComplaintDetailsRequestList()));
             dermatologyCaseSheet.setDermatologyDiagnosisDetailsList(DermatologyDiagnosisDetails.to(dermatologyCaseSheet, createDermatologyCaseSheetRequest.getCreateDiagnosisDetailsRequestList()));
             dermatologyCaseSheetRepository.saveAndFlush(dermatologyCaseSheet);
 
@@ -1079,13 +1089,13 @@ public class ClinicalInfoWritePlatformServiceImpl implements ClinicalInfoWritePl
             log.debug("START saveOpthamologyCaseSheet request {}", createOpthamologyCaseSheetRequest);
             this.caseSheetValidator.validateComplaintData(createOpthamologyCaseSheetRequest.getCreateComplaintDetailsRequestList());
             //this.caseSheetValidator.DermatologyCaseSheetDate(createDermatologyCaseSheetRequest);
-            if (createOpthamologyCaseSheetRequest.getVisitId()==0 || createOpthamologyCaseSheetRequest.getPatientId() ==0) {
+            if (createOpthamologyCaseSheetRequest.getVisitId() == 0 || createOpthamologyCaseSheetRequest.getPatientId() == 0) {
                 throw new NullPointerException("Choose Proper Patient!");
             }
 
             final OpthamologyCaseSheet newOpthamologyCaseSheet = OpthamologyCaseSheet.to(createOpthamologyCaseSheetRequest);
-            newOpthamologyCaseSheet.setOpthamologyComplaintDetailsList(OpthamologyComplaintDetails.to(newOpthamologyCaseSheet,createOpthamologyCaseSheetRequest.getCreateComplaintDetailsRequestList()));
-            newOpthamologyCaseSheet.setOpthamologyDiagnosisDetailsList(OpthamologyDiagnosisDetails.to(newOpthamologyCaseSheet,createOpthamologyCaseSheetRequest.getCreateDiagnosisDetailsRequestList()));
+            newOpthamologyCaseSheet.setOpthamologyComplaintDetailsList(OpthamologyComplaintDetails.to(newOpthamologyCaseSheet, createOpthamologyCaseSheetRequest.getCreateComplaintDetailsRequestList()));
+            newOpthamologyCaseSheet.setOpthamologyDiagnosisDetailsList(OpthamologyDiagnosisDetails.to(newOpthamologyCaseSheet, createOpthamologyCaseSheetRequest.getCreateDiagnosisDetailsRequestList()));
             opthamologyCaseSheetRepository.saveAndFlush(newOpthamologyCaseSheet);
             log.debug("END saveDermatologyCaseSheet id ");
             return new Response(newOpthamologyCaseSheet.getId());
@@ -1099,14 +1109,14 @@ public class ClinicalInfoWritePlatformServiceImpl implements ClinicalInfoWritePl
 
     @Transactional
     @Override
-    public Response updateOpthamologyCaseSheet(Long id, CreateOpthamologyCaseSheetRequest createOpthamologyCaseSheetRequest,Integer caseSheetType) {
+    public Response updateOpthamologyCaseSheet(Long id, CreateOpthamologyCaseSheetRequest createOpthamologyCaseSheetRequest, Integer caseSheetType) {
         try {
-            log.debug("START of updateOpthamologyCaseSheet() id {} request {} caseSheetType{}", id, createOpthamologyCaseSheetRequest,caseSheetType);
+            log.debug("START of updateOpthamologyCaseSheet() id {} request {} caseSheetType{}", id, createOpthamologyCaseSheetRequest, caseSheetType);
             final OpthamologyCaseSheet opthamologyCaseSheet = this.opthamologyCaseSheetRepositoryWrapper.findOneWithNotFoundDetection(id);
             opthamologyCaseSheet.update(createOpthamologyCaseSheetRequest);
             this.opthamologyCaseSheetRepository.saveAndFlush(opthamologyCaseSheet);
 
-            final List<OpthamologyComplaintDetails> complaintDetailsList = this.opthamologyComplainDetailsRepository.fetchOpthamologyComplaintDetailsBycaseSheetId(opthamologyCaseSheet.getId(),caseSheetType);
+            final List<OpthamologyComplaintDetails> complaintDetailsList = this.opthamologyComplainDetailsRepository.fetchOpthamologyComplaintDetailsBycaseSheetId(opthamologyCaseSheet.getId(), caseSheetType);
             for (OpthamologyComplaintDetails opthamologyComplaintDetails : complaintDetailsList) {
                 opthamologyComplaintDetails.setIsValid(0L);
                 opthamologyComplainDetailsRepository.save(opthamologyComplaintDetails);
@@ -1119,7 +1129,7 @@ public class ClinicalInfoWritePlatformServiceImpl implements ClinicalInfoWritePl
                 opthamologyDiagnosisDetailsRepository.save(opthamologyDiagnosisDetails);
             }
 
-            opthamologyCaseSheet.setOpthamologyComplaintDetailsList(OpthamologyComplaintDetails.to(opthamologyCaseSheet,createOpthamologyCaseSheetRequest.getCreateComplaintDetailsRequestList()));
+            opthamologyCaseSheet.setOpthamologyComplaintDetailsList(OpthamologyComplaintDetails.to(opthamologyCaseSheet, createOpthamologyCaseSheetRequest.getCreateComplaintDetailsRequestList()));
             opthamologyCaseSheet.setOpthamologyDiagnosisDetailsList(OpthamologyDiagnosisDetails.to(opthamologyCaseSheet, createOpthamologyCaseSheetRequest.getCreateDiagnosisDetailsRequestList()));
             opthamologyCaseSheetRepository.saveAndFlush(opthamologyCaseSheet);
 
@@ -1137,13 +1147,13 @@ public class ClinicalInfoWritePlatformServiceImpl implements ClinicalInfoWritePl
             log.debug("START saveENTCaseSheet request {}", createENTCaseSheetRequest);
             this.caseSheetValidator.validateComplaintData(createENTCaseSheetRequest.getCreateComplaintDetailsRequestList());
             //this.caseSheetValidator.DermatologyCaseSheetDate(createDermatologyCaseSheetRequest);
-            if (createENTCaseSheetRequest.getVisitId()==0 || createENTCaseSheetRequest.getPatientId() ==0) {
+            if (createENTCaseSheetRequest.getVisitId() == 0 || createENTCaseSheetRequest.getPatientId() == 0) {
                 throw new NullPointerException("Choose Proper Patient!");
             }
 
             final ENTCaseSheet newENTCaseSheet = ENTCaseSheet.to(createENTCaseSheetRequest);
-            newENTCaseSheet.setEntComplaintDetailsList(ENTComplaintDetails.to(newENTCaseSheet,createENTCaseSheetRequest.getCreateComplaintDetailsRequestList()));
-            newENTCaseSheet.setEntDiagnosisDetailsList(ENTDiagnosisDetails.to(newENTCaseSheet,createENTCaseSheetRequest.getCreateDiagnosisDetailsRequestList()));
+            newENTCaseSheet.setEntComplaintDetailsList(ENTComplaintDetails.to(newENTCaseSheet, createENTCaseSheetRequest.getCreateComplaintDetailsRequestList()));
+            newENTCaseSheet.setEntDiagnosisDetailsList(ENTDiagnosisDetails.to(newENTCaseSheet, createENTCaseSheetRequest.getCreateDiagnosisDetailsRequestList()));
             entCaseSheetRepository.saveAndFlush(newENTCaseSheet);
             log.debug("END saveENTCaseSheet id ");
             return new Response(newENTCaseSheet.getId());
@@ -1157,14 +1167,14 @@ public class ClinicalInfoWritePlatformServiceImpl implements ClinicalInfoWritePl
 
     @Transactional
     @Override
-    public Response updateENTCaseSheet(Long id, CreateENTCaseSheetRequest createENTCaseSheetRequest,Integer caseSheetType) {
+    public Response updateENTCaseSheet(Long id, CreateENTCaseSheetRequest createENTCaseSheetRequest, Integer caseSheetType) {
         try {
-            log.debug("START of updateENTCaseSheet() id {} request {} caseSheetType{}", id, createENTCaseSheetRequest,caseSheetType);
+            log.debug("START of updateENTCaseSheet() id {} request {} caseSheetType{}", id, createENTCaseSheetRequest, caseSheetType);
             final ENTCaseSheet entCaseSheet = this.entCaseSheetRepositoryWrapper.findOneWithNotFoundDetection(id);
             entCaseSheet.update(createENTCaseSheetRequest);
             this.entCaseSheetRepository.saveAndFlush(entCaseSheet);
 
-            final List<ENTComplaintDetails> complaintDetailsList = this.entComplainDetailsRepository.fetchENTComplaintDetailsBycaseSheetId(entCaseSheet.getId(),caseSheetType);
+            final List<ENTComplaintDetails> complaintDetailsList = this.entComplainDetailsRepository.fetchENTComplaintDetailsBycaseSheetId(entCaseSheet.getId(), caseSheetType);
             for (ENTComplaintDetails entComplaintDetails : complaintDetailsList) {
                 entComplaintDetails.setIsValid(0L);
                 entComplainDetailsRepository.save(entComplaintDetails);
@@ -1177,7 +1187,7 @@ public class ClinicalInfoWritePlatformServiceImpl implements ClinicalInfoWritePl
                 entDiagnosisDetailsRepository.save(entDiagnosisDetails);
             }
 
-            entCaseSheet.setEntComplaintDetailsList(ENTComplaintDetails.to(entCaseSheet,createENTCaseSheetRequest.getCreateComplaintDetailsRequestList()));
+            entCaseSheet.setEntComplaintDetailsList(ENTComplaintDetails.to(entCaseSheet, createENTCaseSheetRequest.getCreateComplaintDetailsRequestList()));
             entCaseSheet.setEntDiagnosisDetailsList(ENTDiagnosisDetails.to(entCaseSheet, createENTCaseSheetRequest.getCreateDiagnosisDetailsRequestList()));
             entCaseSheetRepository.saveAndFlush(entCaseSheet);
 
@@ -1217,7 +1227,7 @@ public class ClinicalInfoWritePlatformServiceImpl implements ClinicalInfoWritePl
     public Response saveNursingAdmissionChart(final CreateNursingAdmissionChartRequest createNursingAdmissionChartRequest, final Long userId) {
         try {
             log.debug("START saveNursingAdmissionChart request {}", createNursingAdmissionChartRequest);
-            final NursingAdmissionChart newNursingAdmissionChart = NursingAdmissionChart.to(createNursingAdmissionChartRequest,userId);
+            final NursingAdmissionChart newNursingAdmissionChart = NursingAdmissionChart.to(createNursingAdmissionChartRequest, userId);
             this.nursingAdmissionChartRepository.saveAndFlush(newNursingAdmissionChart);
 
             final List<CreateDiagnosisDetailsRequest> diagList = createNursingAdmissionChartRequest.getCreateDiagnosisDetailsRequestList();
@@ -1295,18 +1305,6 @@ public class ClinicalInfoWritePlatformServiceImpl implements ClinicalInfoWritePl
         ResponseDO response = new ResponseDO();
 
         try {
-            if (request == null || request.getEntries() == null || request.getEntries().isEmpty()) {
-                response.setSuccess(false);
-                response.setData("No progress records to save");
-                return response;
-            }
-
-            if (request.getVisitId() == null) {
-                response.setSuccess(false);
-                response.setData("Visit ID is required");
-                return response;
-            }
-
             for (ProgressRecordRequest.ProgressEntry entry : request.getEntries()) {
                 if (entry.getId() != null && entry.getId() > 0) {
                     Optional<ProgressRecord> existingById = progressRecordRepository.findById(entry.getId());
@@ -1345,7 +1343,6 @@ public class ClinicalInfoWritePlatformServiceImpl implements ClinicalInfoWritePl
             return response;
 
         } catch (Exception e) {
-            e.printStackTrace();
             response.setSuccess(false);
             response.setData("Error saving progress records: " + e.getMessage());
             return response;
@@ -1364,4 +1361,68 @@ public class ClinicalInfoWritePlatformServiceImpl implements ClinicalInfoWritePl
         progressRecordRepository.save(newRecord);
     }
 
+    @Transactional
+    @Override
+    public Response saveNursingChart(final CreateNursingChartRequest request, final Long userId) {
+        try {
+            log.debug("START saveNursingChart request {}", request);
+
+            Optional<NursingChart> existingChartOpt = this.nursingChartRepository.findByVisitId(request.getVisitId());
+            NursingChart chart;
+
+            if (existingChartOpt.isPresent()) {
+                log.debug("Updating existing nursing chart for visitId {}", request.getVisitId());
+                chart = existingChartOpt.get();
+                chart.update(request, userId);
+                this.nursingChartRepository.saveAndFlush(chart);
+            } else {
+                log.debug("Creating new nursing chart for visitId {}", request.getVisitId());
+                chart = NursingChart.to(request, userId);
+                this.nursingChartRepository.saveAndFlush(chart);
+            }
+            if (request.getNursingVitalDetails() != null && !request.getNursingVitalDetails().isEmpty()) {
+                for (NursingVitalDetailRequest detailReq : request.getNursingVitalDetails()) {
+                    try {
+                        if (detailReq.getId() != null && detailReq.getId() > 0) {
+                            Optional<NursingChartDetail> existingDetailOpt = this.nursingChartDetailRepository.findById(detailReq.getId());
+
+                            if (existingDetailOpt.isPresent()) {
+                                NursingChartDetail existingDetail = existingDetailOpt.get();
+
+                                if (detailReq.getIsValid() != null && detailReq.getIsValid() == 0) {
+                                    log.debug("Soft deleting nursing chart detail id {}", detailReq.getId());
+                                    existingDetail.setIsValid(0);
+                                } else {
+                                    log.debug("Updating nursing chart detail id {}", detailReq.getId());
+                                    existingDetail.update(detailReq);
+                                }
+
+                                this.nursingChartDetailRepository.save(existingDetail);
+                            } else {
+                                log.warn("Nursing chart detail id {} not found for update", detailReq.getId());
+                            }
+                        } else {
+                            if (detailReq.getIsValid() == null || detailReq.getIsValid() == 1) {
+                                log.debug("Inserting new nursing chart detail");
+                                NursingChartDetail newDetail = NursingChartDetail.fromRequest(detailReq);
+                                newDetail.setChartId(chart.getId());
+                                newDetail.setIsValid(1);
+                                this.nursingChartDetailRepository.save(newDetail);
+                            }
+                        }
+                    } catch (Exception ex) {
+                        log.error("Failed to process nursing vital detail: {}", ex.getMessage(), ex);
+                    }
+                }
+            }
+
+            log.debug("END saveNursingChart id {}", chart.getId());
+            return new Response(chart.getId());
+
+        } catch (Exception e) {
+            log.error("Caught exception while saving nursing chart: {}", e.getMessage(), e);
+            throw new RuntimeException("Failed to save nursing chart: " + e.getMessage());
+        }
+    }
 }
+
