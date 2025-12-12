@@ -14,6 +14,7 @@ import com.ueniweb.swiftwaresolutions.services.ClinicalInfoReadPlatformService;
 import com.ueniweb.swiftwaresolutions.services.ClinicalInfoWritePlatformService;
 import com.ueniweb.swiftwaresolutions.servers.ProductDetailsReadPlatformService;
 import com.ueniweb.swiftwaresolutions.services.UserReadPlatformService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -760,6 +761,39 @@ public class ClinicalInformationController {
     @GetMapping("/fetchNursingChartByVstId/{vstId}")
     public NursingChartData fetchNursingChartByVstId(@PathVariable Long vstId) {
         return this.clinicalInfoReadPlatformService.fetchNursingChartByVstId(vstId);
+    }
+
+    @PostMapping("/saveAdministrativeMedication")
+    public Response saveAdministrativeMedication(@Valid @RequestBody CreateMedicationRequest createMedicationRequest) {
+        return this.clinicalInfoWritePlatformService.saveAdministrativeMedication(createMedicationRequest);
+    }
+
+    @PutMapping("/updateAdministrativeMedication/{id}")
+    public Response updateAdministrativeMedication(@PathVariable Long id,@Valid @RequestBody CreateMedicationRequest request) {
+        return this.clinicalInfoWritePlatformService.updateAdministrativeMedication(id, request);
+    }
+
+    @GetMapping("/fetchAdministrativeMedication")
+    public ResponseEntity<?> fetchAdministrativeMedication(
+            @RequestParam Long visitId,
+            @RequestParam String entryDate) {
+
+        try {
+            MedicationFetchData data =
+                    this.clinicalInfoReadPlatformService
+                            .fetchAdministrativeMedication(visitId, entryDate);
+
+            if (data != null) {
+                return ResponseEntity.ok(data);
+            } else {
+                return ResponseEntity.ok("null");
+            }
+
+        } catch (Exception e) {
+            return ResponseEntity
+                    .badRequest()
+                    .body("Error fetching administrative medication: " + e.getMessage());
+        }
     }
 
 }
