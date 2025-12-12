@@ -701,9 +701,10 @@ public class ClinicalInformationController {
             if (nursingCheckList != null) {
                 return ResponseEntity.ok(nursingCheckList);
             } else {
-                return ResponseEntity.notFound().build();
+                return ResponseEntity.ok(null);
             }
         } catch (Exception e) {
+            log.error("Error fetching nursing checklist for visitId {}: {}", visitId, e.getMessage(), e);
             return ResponseEntity.badRequest().body("Error fetching nursing checklist: " + e.getMessage());
         }
     }
