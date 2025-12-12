@@ -120,4 +120,9 @@ public interface ClinicalInfoWritePlatformService {
     ResponseDO saveOrUpdateProgressRecords(final ProgressRecordRequest request, Long userId);
     
     Response saveNursingChart(final CreateNursingChartRequest createNursingChartRequest, final Long userId);
+
+    Response saveAdministrativeMedication(final CreateMedicationRequest createMedicationRequest);
+
+    Response updateAdministrativeMedication(Long id,CreateMedicationRequest request);
+
 }

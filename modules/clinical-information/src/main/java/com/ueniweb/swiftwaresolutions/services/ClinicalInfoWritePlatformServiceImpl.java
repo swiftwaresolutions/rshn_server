@@ -182,6 +182,11 @@ public class ClinicalInfoWritePlatformServiceImpl implements ClinicalInfoWritePl
 
     private final NursingChartDetailRepository nursingChartDetailRepository;
 
+    private final MedicationRepository medicationRepository;
+
+    private final MedicineAdministrationEntryRepository medicineAdministrationEntryRepository;
+
+    private final MedicineAdministrationTimingRepository medicineAdministrationTimingRepository;
 
     @Transactional
     @Override
@@ -1424,5 +1429,140 @@ public class ClinicalInfoWritePlatformServiceImpl implements ClinicalInfoWritePl
             throw new RuntimeException("Failed to save nursing chart: " + e.getMessage());
         }
     }
+
+    @Transactional
+    @Override
+    public Response saveAdministrativeMedication(
+            final CreateMedicationRequest request) {
+
+        try {
+            log.debug("START saveAdministrativeMedication request {}", request);
+
+            if (request.getPatientId() == null || request.getVisitId() == null) {
+                throw new RuntimeException("Patient ID and Visit ID are mandatory");
+            }
+
+            if (request.getMedicineIds() == null || request.getMedicineIds().isEmpty()) {
+                throw new RuntimeException("At least one medicine is required");
+            }
+
+            if (request.getTimings() == null || request.getTimings().isEmpty()) {
+                throw new RuntimeException("Medication timing is required");
+            }
+
+            Medication medication = new Medication();
+            medication.setEntryDate(LocalDate.parse(request.getEntryDate()));
+            medication.setPatientId(request.getPatientId());
+            medication.setVisitId(request.getVisitId());
+            medication.setDoctorChecked(request.getDoctorChecked());
+            medication.setConsultantId(request.getConsultantId());
+            medication.setNurseId(request.getNurseId());
+            medication.setCreatedAt(LocalDateTime.now());
+            medication.setUpdatedAt(LocalDateTime.now());
+
+            medicationRepository.save(medication);
+
+            for (int i = 0; i < request.getMedicineIds().size(); i++) {
+
+                Long medicineId = request.getMedicineIds().get(i);
+
+                MedicineAdministrationEntry entry =
+                        new MedicineAdministrationEntry();
+
+                entry.setAdministrationId(medication.getId());
+                entry.setMedicineId(medicineId);
+
+                medicineAdministrationEntryRepository.save(entry);
+
+                List<CreateMedicationRequest.MedicationTiming> timeList =
+                        request.getTimings().get(i);
+
+                for (CreateMedicationRequest.MedicationTiming t : timeList) {
+
+                    MedicineAdministrationTiming timing =
+                            new MedicineAdministrationTiming();
+
+                    timing.setEntryId(entry.getId());
+                    timing.setTime(LocalTime.parse(t.getTime()));
+                    timing.setNurseId(t.getNurseId());
+
+                    medicineAdministrationTimingRepository.save(timing);
+                }
+            }
+
+            return new Response(medication.getId());
+
+        } catch (Exception e) {
+            log.error("Exception while saving AdministrativeMedication", e);
+            throw new RuntimeException("Failed to save medication");
+        }
+    }
+
+    @Transactional
+    @Override
+    public Response updateAdministrativeMedication(
+            Long id,
+            final CreateMedicationRequest request) {
+
+        try {
+            log.debug("START updateAdministrativeMedication id {} request {}", id, request);
+
+            Medication medication = medicationRepository.findById(id)
+                    .orElseThrow(() -> new RuntimeException("Medication record not found"));
+
+            medication.setEntryDate(LocalDate.parse(request.getEntryDate()));
+            medication.setPatientId(request.getPatientId());
+            medication.setVisitId(request.getVisitId());
+            medication.setDoctorChecked(request.getDoctorChecked());
+            medication.setConsultantId(request.getConsultantId());
+            medication.setNurseId(request.getNurseId());
+            medication.setUpdatedAt(LocalDateTime.now());
+
+            medicationRepository.save(medication);
+
+            List<MedicineAdministrationEntry> oldEntries =
+                    medicineAdministrationEntryRepository.findByAdministrationId(id);
+
+            for (MedicineAdministrationEntry old : oldEntries) {
+                medicineAdministrationTimingRepository.deleteByEntryId(old.getId());
+            }
+
+            medicineAdministrationEntryRepository.deleteByAdministrationId(id);
+
+            for (int i = 0; i < request.getMedicineIds().size(); i++) {
+
+                MedicineAdministrationEntry entry =
+                        new MedicineAdministrationEntry();
+
+                entry.setAdministrationId(id);
+                entry.setMedicineId(request.getMedicineIds().get(i));
+
+                medicineAdministrationEntryRepository.save(entry);
+
+                List<CreateMedicationRequest.MedicationTiming> timeList =
+                        request.getTimings().get(i);
+
+                for (CreateMedicationRequest.MedicationTiming t : timeList) {
+
+                    MedicineAdministrationTiming timing =
+                            new MedicineAdministrationTiming();
+
+                    timing.setEntryId(entry.getId());
+                    timing.setTime(LocalTime.parse(t.getTime()));
+                    timing.setNurseId(t.getNurseId());
+
+                    medicineAdministrationTimingRepository.save(timing);
+                }
+            }
+
+            log.debug("END updateAdministrativeMedication id {}", id);
+            return new Response(id);
+
+        } catch (Exception e) {
+            log.error("Exception while updating AdministrativeMedication", e);
+            throw new RuntimeException("Failed to update medication");
+        }
+    }
+
 }
 

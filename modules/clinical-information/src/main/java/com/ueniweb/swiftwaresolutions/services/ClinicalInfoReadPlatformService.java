@@ -106,4 +106,6 @@ public interface ClinicalInfoReadPlatformService {
     List<ProgressRecord> getProgressRecordsByVisitId(Integer visitId);
     
     NursingChartData fetchNursingChartByVstId(Long vstId);
+
+    MedicationFetchData fetchAdministrativeMedication(Long visitId, String entryDate);
 }

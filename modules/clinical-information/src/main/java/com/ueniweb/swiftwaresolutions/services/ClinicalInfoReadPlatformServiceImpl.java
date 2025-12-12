@@ -7,6 +7,7 @@ import com.ueniweb.swiftwaresolutions.repository.*;
 import com.ueniweb.swiftwaresolutions.rowmapper.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
@@ -865,5 +866,61 @@ public class ClinicalInfoReadPlatformServiceImpl implements ClinicalInfoReadPlat
             throw new RuntimeException("Failed to fetch nursing chart: " + e.getMessage());
         }
     }
+
+    @Override
+    public MedicationFetchData fetchAdministrativeMedication(Long visitId, String entryDate) {
+
+        try {
+            final MedicationRowMapper rowMapper = new MedicationRowMapper();
+
+            final String sql = "SELECT " + rowMapper.schema()
+                    + " WHERE ma.visit_id = " + visitId
+                    + " AND ma.entry_date = '" + entryDate + "'";
+
+            // Attempt to fetch parent
+            MedicationFetchData parent =
+                    this.jdbcTemplate.queryForObject(sql, rowMapper);
+
+            // If found → continue to fetch entries and timings
+            List<MedicationFetchData.MedicineEntryData> entries =
+                    fetchMedicineEntriesByAdminId(parent.getId());
+
+            for (MedicationFetchData.MedicineEntryData entry : entries) {
+                List<MedicationFetchData.TimingData> timings =
+                        fetchTimingsByEntryId(entry.getEntryId());
+                entry.setTimings(timings);
+            }
+
+            parent.setMedicineEntries(entries);
+            return parent;
+
+        } catch (EmptyResultDataAccessException ex) {
+
+            // ⭐ EXACT BEHAVIOR YOU REQUESTED
+            return null;
+
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to fetch administrative medication: " + e.getMessage());
+        }
+    }
+
+    public List<MedicationFetchData.MedicineEntryData> fetchMedicineEntriesByAdminId(Long adminId) {
+
+        final MedicineEntryRowMapper rowMapper = new MedicineEntryRowMapper();
+        final String sql = "SELECT " + rowMapper.schema() +
+                " WHERE e.administration_id = " + adminId;
+
+        return this.jdbcTemplate.query(sql, rowMapper);
+    }
+
+    public List<MedicationFetchData.TimingData> fetchTimingsByEntryId(Long entryId) {
+
+        final MedicationTimingRowMapper rowMapper = new MedicationTimingRowMapper();
+        final String sql = "SELECT " + rowMapper.schema() +
+                " WHERE t.entry_id = " + entryId;
+
+        return this.jdbcTemplate.query(sql, rowMapper);
+    }
+
 }
 
