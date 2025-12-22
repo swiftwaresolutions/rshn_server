@@ -917,7 +917,7 @@ public class ClinicalInfoReadPlatformServiceImpl implements ClinicalInfoReadPlat
 
         final MedicationTimingRowMapper rowMapper = new MedicationTimingRowMapper();
         final String sql = "SELECT " + rowMapper.schema() +
-                " WHERE t.entry_id = " + entryId;
+                " WHERE t.entry_id = " + entryId +" ORDER BY t.time ASC";
 
         return this.jdbcTemplate.query(sql, rowMapper);
     }
