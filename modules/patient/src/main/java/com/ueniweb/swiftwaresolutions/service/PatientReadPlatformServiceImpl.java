@@ -22,7 +22,7 @@ public class PatientReadPlatformServiceImpl implements PatientReadPlatformServic
     public List<PatientData> fetchAllPatientData() {
         try {
             final PatientRowMapper patientRowMapper = new PatientRowMapper();
-            String whereCondition = " WHERE c.is_cardin_rack = 0 AND c.is_in_ip=0 AND b.date = CURRENT_DATE AND c.is_blocked=0 AND c.loc_id = 1 " +
+            String whereCondition = " WHERE c.is_cardin_rack = 0 AND c.is_in_ip=0 AND b.date = CURRENT_DATE AND c.is_blocked=0 AND c.loc_id = 1 AND b.doctor_id != 34 " +
                     "GROUP BY DATE(b.date),c.display_number,b.id\n" +
                     "ORDER BY (CASE WHEN d.dept_id = '' THEN 0 ELSE 1 END),(CASE WHEN u.id = '' THEN 0 ELSE 1 END),d.name,b.token_no_doctor \n";
             //String qry = "SELECT " + patientRowMapper.schema() + whereCondition + " LIMIT ? OFFSET ? ";
