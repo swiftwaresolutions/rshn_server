@@ -207,12 +207,13 @@ public class ClinicalInfoReadPlatformServiceImpl implements ClinicalInfoReadPlat
     }
 
     @Override
-    public List<PrevPrescriptionDetailsData> fetchPrevPrescriptionDetails(Long patId,Integer storeId) {
+    public List<PrevPrescDetailsData> fetchPrevPrescriptionDetails(Long patId,Integer storeId) {
         log.debug("START of fetchPrevPrescriptionDetails() patId{} ", patId);
-        final PrevPrescDetailsRowMapper prevPrescDetailsRowMapper = new PrevPrescDetailsRowMapper();
-        String whereCondition = " WHERE a.generic_id=d.id AND a.prods_id=e.id AND a.prescription_id=b.id AND b.pat_id = " + patId + " and a.is_cancelled=0";
+        final PrevPrescriptionDetailsRowMapper prevPrescDetailsRowMapper = new PrevPrescriptionDetailsRowMapper();
+        //String whereCondition = " WHERE a.generic_id=d.id AND a.prods_id=e.id AND a.prescription_id=b.id AND b.pat_id = " + patId + " and a.is_cancelled=0";
 
-        String qry = " SELECT " + prevPrescDetailsRowMapper.tableSchema(storeId) + whereCondition;
+        //String qry = " SELECT " + prevPrescDetailsRowMapper.tableSchema(storeId) + whereCondition;
+        String qry = prevPrescDetailsRowMapper.tableSchema(storeId, patId);
         log.debug("END of fetchPrevPrescriptionDetails()");
         return this.jdbcTemplate.query(qry, prevPrescDetailsRowMapper);
     }
@@ -221,9 +222,7 @@ public class ClinicalInfoReadPlatformServiceImpl implements ClinicalInfoReadPlat
     public List<PrevPrescriptionDetailsData> fetchPrescriptionDetailsByVstId(Long vstId,Integer isFromSummary) {
         log.debug("START of fetchPrescriptionDetailsByVstId() vstId{} isFromSummary{}", vstId,isFromSummary);
         final PrevPrescDetailsRowMapper prevPrescDetailsRowMapper = new PrevPrescDetailsRowMapper();
-        String whereCondition = " WHERE a.generic_id=d.id AND a.prods_id=e.id AND a.prescription_id=b.id AND b.visit_id = " + vstId + " and b.isFromSummary="+isFromSummary+" and a.is_cancelled=0";
-
-        String qry = " SELECT " + prevPrescDetailsRowMapper.tableSchema(1) + whereCondition;
+        String qry = prevPrescDetailsRowMapper.tableSchemaByVstId(1, vstId, isFromSummary);
         log.debug("END of fetchPrescriptionDetailsByVstId()");
         return this.jdbcTemplate.query(qry, prevPrescDetailsRowMapper);
     }

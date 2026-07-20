@@ -37,6 +37,54 @@ public class PrevPrescDetailsRowMapper  implements RowMapper<PrevPrescriptionDet
         return builder.toString();
     }
 
+    public String tableSchemaByVstId(Integer storeId, Long vstId, Integer isFromSummary) {
+        final StringBuilder builder = new StringBuilder();
+
+        builder.append(" SELECT ");
+        builder.append("b.display as displayNo,d.id AS genId,d.`name` AS genName,e.`id`,e.`name` AS medName,m.`form_type` AS formType,h.`name` AS unit,h.`id` AS unitId,");
+        builder.append(" e.`strength` AS medStrength,e.`quantity` AS medQuantity,getStoreStock(e.id,").append(storeId).append(") AS stock,i.`name` AS timing,i.id AS timingId,a.`quantity`,a.`duration`,j.`name` AS period,");
+        builder.append(" j.`id` AS periodId,a.`qno` AS no,ifnull(a.timingUnits,'0-0-0') AS timingUnit,getBatchMrpRate(e.`name`) AS mrpPrice,a.is_own AS own,a.date AS date,b.isFromSummary,b.is_billed ");
+        builder.append(this.schema);
+        builder.append(" WHERE a.generic_id=d.id AND a.prods_id=e.id AND a.prescription_id=b.id AND b.visit_id=").append(vstId);
+        builder.append(" AND b.isFromSummary=").append(isFromSummary).append(" AND a.is_cancelled=0 ");
+
+        builder.append(" UNION ALL ");
+        builder.append(" SELECT ");
+        builder.append(" b.display AS displayNo,");
+        builder.append(" 0 AS genId,");
+        builder.append(" '' AS genName,");
+        builder.append(" a.id,");
+        builder.append(" a.med_name AS medName,");
+        builder.append(" 0 AS formType,");
+        builder.append(" h.name AS unit,");
+        builder.append(" h.id AS unitId,");
+        builder.append(" 0 AS medStrength,");
+        builder.append(" 0 AS medQuantity,");
+        builder.append(" 0 AS stock,");
+        builder.append(" i.name AS timing,");
+        builder.append(" i.id AS timingId,");
+        builder.append(" a.quantity,");
+        builder.append(" 0 AS duration,");
+        builder.append(" '' AS period,");
+        builder.append(" 0 AS periodId,");
+        builder.append(" a.quantity AS no,");
+        builder.append(" '0-0-0' AS timingUnit,");
+        builder.append(" 0 AS mrpPrice,");
+        builder.append(" a.is_own AS own,");
+        builder.append(" '' AS date,");
+        builder.append(" b.isFromSummary,");
+        builder.append(" b.is_billed ");
+        builder.append(" FROM ph_prescription_details_manual_med a ");
+        builder.append(" INNER JOIN ph_prescription b ON a.prescription_id=b.id ");
+        builder.append(" LEFT JOIN ph_prods_unit h ON a.unit=h.id ");
+        builder.append(" LEFT JOIN nur_master_timing i ON a.timing=i.id ");
+        builder.append(" WHERE b.visit_id=").append(vstId);
+        builder.append(" AND b.isFromSummary=").append(isFromSummary);
+        builder.append(" AND a.is_cancelled=0 ORDER BY displayNo");
+
+        return builder.toString();
+    }
+
     @Override
     public PrevPrescriptionDetailsData mapRow(ResultSet rs, int rowNum) throws SQLException {
 

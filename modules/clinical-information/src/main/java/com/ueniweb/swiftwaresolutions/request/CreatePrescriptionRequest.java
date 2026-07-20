@@ -51,6 +51,8 @@ public class CreatePrescriptionRequest  {
 
     private List<CreatePrescriptionDetailsRequest> createPrescriptionDetailsRequestList;
 
+    private List<CreateManualMedPrescriptionDetailsRequest> createManualMedPrescriptionDetailsRequestList;
+
     @Override
     public String toString() {
         return "CreatePrescriptionRequest{" +

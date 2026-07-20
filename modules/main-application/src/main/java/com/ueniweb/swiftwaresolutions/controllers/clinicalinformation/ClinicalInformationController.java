@@ -104,7 +104,7 @@ public class ClinicalInformationController {
     }
 
     @GetMapping("/fetchPrevPrescriptionDetails/{patId}/{storeId}")
-    public List<PrevPrescriptionDetailsData> fetchPatientLastPrescription(@PathVariable(name = "patId") Long patId,
+    public List<PrevPrescDetailsData> fetchPatientLastPrescription(@PathVariable(name = "patId") Long patId,
                                                                           @PathVariable(name = "storeId") Integer storeId) {
         return this.clinicalInfoReadPlatformService.fetchPrevPrescriptionDetails(patId,storeId);
     }

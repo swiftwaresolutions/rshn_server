@@ -93,6 +93,9 @@ public class Prescription {
     @OneToMany(mappedBy = "prescriptionId", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<PrescriptionDetails> phDescriptionDetailsList = new ArrayList<>();
 
+    @OneToMany(mappedBy = "prescriptionId", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<PrescriptionManualMedDetails> prescriptionManualMedDetailsList = new ArrayList<>();
+
     public static Prescription to(final CreatePrescriptionRequest prescriptionRequest){
         Prescription prescription = new Prescription();
         prescription.setDisplay(String.valueOf(prescriptionRequest.getDisplay()));

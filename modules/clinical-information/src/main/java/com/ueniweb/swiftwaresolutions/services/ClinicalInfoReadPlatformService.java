@@ -13,7 +13,7 @@ import java.util.Map;
 
 public interface ClinicalInfoReadPlatformService {
 
-    List<PrevPrescriptionDetailsData> fetchPrevPrescriptionDetails(Long patId,Integer storeId);
+    List<PrevPrescDetailsData> fetchPrevPrescriptionDetails(Long patId,Integer storeId);
 
     List<PrevPrescriptionDetailsData> fetchPrescriptionDetailsByVstId(Long vstId,Integer isFromSummary);
 

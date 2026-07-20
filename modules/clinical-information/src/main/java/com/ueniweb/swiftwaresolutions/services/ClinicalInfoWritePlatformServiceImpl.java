@@ -188,6 +188,8 @@ public class ClinicalInfoWritePlatformServiceImpl implements ClinicalInfoWritePl
 
     private final MedicineAdministrationTimingRepository medicineAdministrationTimingRepository;
 
+    private final PrescriptionManualMedDetailsRepository prescriptionManualMedDetailsRepository;
+
     @Transactional
     @Override
     public Response saveGeneralCaseSheet(final GeneralCaseSheetRequest generalCaseSheetRequest) {
@@ -223,6 +225,7 @@ public class ClinicalInfoWritePlatformServiceImpl implements ClinicalInfoWritePl
             this.entityManager.persist(prescription);  // for inserting display
             prescription.setDisplay(prescription.getId().toString());// for inserting display
             prescription.setPhDescriptionDetailsList(PrescriptionDetails.to(prescription, createPrescriptionRequest.getCreatePrescriptionDetailsRequestList()));
+            prescription.setPrescriptionManualMedDetailsList(PrescriptionManualMedDetails.to(prescription, createPrescriptionRequest.getCreateManualMedPrescriptionDetailsRequestList()));
             final Prescription newPrescription = prescriptionRepository.saveAndFlush(prescription);
             log.debug("END savePrescription id ");
             System.out.print("vada" + newPrescription.getId());
@@ -291,7 +294,14 @@ public class ClinicalInfoWritePlatformServiceImpl implements ClinicalInfoWritePl
                 prescriptionDetails.setIsCancelled(1L);
             }
             this.prescriptionDetailsRepository.saveAllAndFlush(prescriptionDetailsList);
+            final List<PrescriptionManualMedDetails> manualMedList = this.prescriptionManualMedDetailsRepository.fetchPrescriptionManualMedDetailsByPrescriptionId(prescription.getId());
+            for (PrescriptionManualMedDetails manualMed : manualMedList) {
+                manualMed.setIsCancelled(1L);
+            }
+            this.prescriptionManualMedDetailsRepository
+                    .saveAllAndFlush(manualMedList);
             prescription.setPhDescriptionDetailsList(PrescriptionDetails.to(prescription, updatePrescriptionRequest.getCreatePrescriptionDetailsRequestList()));
+            prescription.setPrescriptionManualMedDetailsList(PrescriptionManualMedDetails.to(prescription, updatePrescriptionRequest.getCreateManualMedPrescriptionDetailsRequestList()));
             //  prescription.update(updatePrescriptionRequest);
             this.prescriptionRepository.saveAndFlush(prescription);
             log.debug("END updatePrescription id {} request {}", id, updatePrescriptionRequest);
