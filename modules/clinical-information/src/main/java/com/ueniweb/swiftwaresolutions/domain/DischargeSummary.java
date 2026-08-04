@@ -94,6 +94,8 @@ public class DischargeSummary {
     @Column(name = "outSideMedicine", columnDefinition = "TEXT")
     private String outSideMedicine;
 
+    @Column(name = "dischargeStatus")
+    private String dischargeStatus;
 
 
     @OneToMany(mappedBy = "summaryId", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
@@ -134,6 +136,7 @@ public class DischargeSummary {
         dischargeSummary.setReviewDTM(createDischargeSummaryRequest.getReviewDTM());
         dischargeSummary.setIsActive(1);
         dischargeSummary.setOutSideMedicine(createDischargeSummaryRequest.getOutSideMedicine());
+        dischargeSummary.setDischargeStatus(createDischargeSummaryRequest.getDischargeStatus());
 
         return dischargeSummary;
     }
@@ -163,6 +166,7 @@ public class DischargeSummary {
         this.reviewDTM      = createDischargeSummaryRequest.getReviewDTM();
         this.isActive       = 1;
         this.outSideMedicine         = createDischargeSummaryRequest.getOutSideMedicine();
+        this.dischargeStatus         = createDischargeSummaryRequest.getDischargeStatus();
 
     }
 }

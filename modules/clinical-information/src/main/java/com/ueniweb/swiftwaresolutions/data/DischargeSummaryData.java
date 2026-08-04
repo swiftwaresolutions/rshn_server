@@ -57,6 +57,8 @@ public class DischargeSummaryData {
 
     private String outSideMedicine;
 
+    private String dischargeStatus;
+
     private List<DischargeDiagnosisData> dischargeDiagnosisDataList;
 
     private List<DischargeLabInvSummaryData> dischargeLabInvSummaryDataList;
@@ -69,7 +71,7 @@ public class DischargeSummaryData {
     public DischargeSummaryData(Long id, Long patId, Long vstId,Long ipId,Long consultantId,String consultantName,String diagnosis,String history, String examination,
                                   String treatment,String courseInTheHospital,String operativeFindings,String conditionOfPatient,String emergencyIndication,
                                   String dischargeAdvice, String gynaecology,String obstetrics,String neonatal,String babyDetail,String date,String time,
-                                  Long uId,String reviewDTM,Long is_active,String outSideMedicine){
+                                  Long uId,String reviewDTM,Long is_active,String outSideMedicine,String dischargeStatus){
 
         this.id = id;
         this.patId = patId;
@@ -96,17 +98,18 @@ public class DischargeSummaryData {
         this.reviewDTM = reviewDTM;
         this.is_active = is_active;
         this.outSideMedicine = outSideMedicine;
+        this.dischargeStatus = dischargeStatus;
     }
 
     public static DischargeSummaryData createNewInstance(Long id, Long patId, Long vstId,Long ipId,Long consultantId,String consultantName ,String diagnosis,String history, String examination,
                                                      String treatment,String courseInTheHospital,String operativeFindings,String conditionOfPatient,String emergencyIndication,
                                                      String dischargeAdvice, String gynaecology,String obstetrics,String neonatal,String babyDetail,String date,String time,
-                                                     Long uId,String reviewDTM,Long is_active,String outSideMedicine) {
+                                                     Long uId,String reviewDTM,Long is_active,String outSideMedicine,String dischargeStatus) {
 
         return new DischargeSummaryData(id,patId,vstId,ipId,consultantId,consultantName,diagnosis,history,examination,
                 treatment,courseInTheHospital,operativeFindings,conditionOfPatient,emergencyIndication,
                 dischargeAdvice, gynaecology,obstetrics,neonatal,babyDetail,date,time,uId,reviewDTM,
-                is_active,outSideMedicine);
+                is_active,outSideMedicine,dischargeStatus);
     }
 
 }

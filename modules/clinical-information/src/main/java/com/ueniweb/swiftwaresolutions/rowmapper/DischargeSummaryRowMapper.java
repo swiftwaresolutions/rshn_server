@@ -41,7 +41,8 @@ public class DischargeSummaryRowMapper implements RowMapper<DischargeSummaryData
         builder.append("cs.uId as uId, ");
         builder.append("cs.reviewDTM as reviewDTM, ");
         builder.append("cs.isActive as is_active, ");
-        builder.append("cs.outSideMedicine as outSideMedicine ");
+        builder.append("cs.outSideMedicine as outSideMedicine, ");
+        builder.append("cs.dischargeStatus as dischargeStatus ");
 
         builder.append(tableBuilder);
         this.tableSchema = tableBuilder.toString();
@@ -83,11 +84,12 @@ public class DischargeSummaryRowMapper implements RowMapper<DischargeSummaryData
         final String reviewDTM = rs.getString("reviewDTM");
         final Long is_active = rs.getLong("is_active");
         final String outSideMedicine = rs.getString("outSideMedicine");
+        final String dischargeStatus = rs.getString("dischargeStatus");
 
 
         return DischargeSummaryData.createNewInstance(id, patId, vstId, ipId, consultantId,consultantName, diagnosis,
                 history, examination, treatment, courseInTheHospital, operativeFindings, conditionOfPatient, emergencyIndication,
-                dischargeAdvice, gynaecology, obstetrics, neonatal, babyDetail, date, time, uId, reviewDTM, is_active,outSideMedicine
+                dischargeAdvice, gynaecology, obstetrics, neonatal, babyDetail, date, time, uId, reviewDTM, is_active,outSideMedicine,dischargeStatus
         );
     }
 }

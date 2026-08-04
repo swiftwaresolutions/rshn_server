@@ -53,6 +53,8 @@ public class CreateDischargeSummaryRequest {
 
     private String outSideMedicine;
 
+    private String dischargeStatus;
+
 
     private List<CreateSummaryDiagnosisDetailsRequest> createSummaryDiagnosisDetailsRequestList;
 
