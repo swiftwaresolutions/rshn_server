@@ -20,6 +20,8 @@ public class PrevVisitPatientRowMapper implements RowMapper<PatientData> {
         tableBuilder.append(" LEFT OUTER JOIN rec_patient_details p ON p.pat_id = b.pat_id ");
         tableBuilder.append(" LEFT OUTER JOIN rec_config_msc_consultants d ON d.id = b.doctor_id ");
         tableBuilder.append(" LEFT OUTER JOIN rec_config_msc_departments dep ON dep.id = b.`service_id` ");
+        tableBuilder.append(" LEFT OUTER JOIN cli_patient_general_casesheet h ON h.vstId = b.id ");
+        tableBuilder.append(" LEFT OUTER JOIN cli_patient_vital_details vital ON b.id = vital.vstId ");
 
         final StringBuilder builder = new StringBuilder(200);
 
@@ -34,6 +36,8 @@ public class PrevVisitPatientRowMapper implements RowMapper<PatientData> {
         builder.append("d.id AS doctor_id, ");
         builder.append("a.id AS patient_id, ");
         builder.append("b.id AS visit_id, ");
+        builder.append("(CASE WHEN h.vstId IS NULL THEN 0 WHEN h.vstId = b.id THEN 1 ELSE 0 END) AS casesheet_status, ");
+        builder.append("(CASE WHEN vital.id IS NULL THEN 0 ELSE 1 END) AS vital_status, ");
         builder.append("dep.name AS departmentName \n");
 
         builder.append(tableBuilder);
@@ -62,11 +66,11 @@ public class PrevVisitPatientRowMapper implements RowMapper<PatientData> {
         final Long visitId = rs.getLong("visit_id");
         final String departmentName = rs.getString("departmentName");
         final boolean isNew = false;
-        final int casesheetStatus = 0;
+        final int casesheetStatus = rs.getInt("casesheet_status");
         final int labStatus = 0;
         final int procStatus = 0;
         final int prescriptionStatus = 0;
-        final int vitalStatus = 0;
+        final int vitalStatus = rs.getInt("vital_status");
 
         return PatientData.newInstance(name, displayNumber, fullName, age, gender, tokenNoDoctor, formattedTime,
                 doctorId, patientId, visitId, isNew, casesheetStatus, labStatus, procStatus,
