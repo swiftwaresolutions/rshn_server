@@ -28,7 +28,7 @@ public class PrePatientRowMapper  implements RowMapper<PrePatientData> {
     public String tableSchema() {
         final StringBuilder builder = new StringBuilder(200);
         builder.append(" d.name AS NAME,calcAge(b.`dob`)  AS dob,b.`sex` AS sex,IFNULL( c.`date`, '#') AS admDate,\n" +
-                "IFNULL( c.`discharged_date`, 'Not yet Discharged')AS dDate ,d.display_number ");
+                "IFNULL( c.`discharged_date`, 'Not yet Discharged')AS dDate ,d.display_number, c.display AS ipNo ");
         builder.append(this.schema);
         return builder.toString();
     }
@@ -41,8 +41,9 @@ public class PrePatientRowMapper  implements RowMapper<PrePatientData> {
         final String admDate        = rs.getString("admDate");
         final String dDate        = rs.getString("dDate");
         final String displayNumber        = rs.getString("display_number");
+        final String ipNo        = rs.getString("ipNo");
 
 
-        return PrePatientData.createNewInstance(name, dob, sex, admDate, dDate,displayNumber);
+        return PrePatientData.createNewInstance(name, dob, sex, admDate, dDate,displayNumber, ipNo);
     }
 }
